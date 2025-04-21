@@ -5,7 +5,7 @@
 ```console
 $ python3 -m venv venv
 ```
-### Cctivate virtual env
+### Activate virtual env
 ```console
 $ source venv/bin/activate
 ```
@@ -16,10 +16,10 @@ $ pip install -r requirements.txt
 
 ### Setting the FLASK_APP environment variable
 ```console
-$ export FLASK_APP=microblog.py
+$ export FLASK_APP=news-sentiment-analysis.py
 ```
 
-### run the app
+### Run the app
 ```console
 $ flask run
 ```
