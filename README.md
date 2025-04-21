@@ -1,24 +1,25 @@
-# news-sentiment-analysis Dev Env Setup
+# news-sentiment-analysis
 
-## Create virtual env
+## Dev Env Setup
+### Create virtual env
 ```console
 $ python3 -m venv venv
 ```
-## Cctivate virtual env
+### Cctivate virtual env
 ```console
 source venv/bin/activate
 ```
-## Install dependencies
+### Install dependencies
 ```console
 pip install -r requirements.txt
 ```
 
-## Setting the FLASK_APP environment variable
+### Setting the FLASK_APP environment variable
 ```console
 $ export FLASK_APP=microblog.py
 ```
 
-## run the app
+### run the app
 ```console
 flask run
 ```
