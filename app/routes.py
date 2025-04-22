@@ -67,3 +67,18 @@ def register():
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
+
+
+# upload页面
+@app.route('/upload', methods=['GET', 'POST'])
+# @login_required  
+def upload():
+    if request.method == 'POST':
+        news_content = request.form['news_content']
+        
+        # 占位用
+        sentiment_result = f"result of sentiment: positive"
+
+        return render_template('visualize.html', content=news_content, result=sentiment_result)
+    
+    return render_template('upload.html', title='Upload News')
