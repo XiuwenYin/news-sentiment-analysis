@@ -9,6 +9,7 @@ from flask import render_template, flash, \
 from app import app, db
 from app.forms import LoginForm, RegistrationForm
 from urllib.parse import urlsplit
+from transformers import pipeline
 
 
 @app.route('/')
@@ -67,3 +68,28 @@ def register():
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
+
+@app.route('/analysis', methods=['GET', 'POST'])
+def analysis():
+    label_map = {
+        "LABEL_0": "Negative",
+        "LABEL_1": "Neutral",
+        "LABEL_2": "Positive"
+    }
+
+    result = None
+    if request.method == 'POST':
+        text_input = request.form.get('textInput', '')
+
+        # Perform sentiment analysis or other processing here
+        classifier = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment")
+        output = classifier(text_input)
+
+        output_dict = output[0]  # <- this is a dict inside a list
+        sentiment = label_map[output_dict["label"]]
+        confidence = output_dict["score"]
+        result = f"Sentiment: {sentiment} ({confidence:.2%} confidence)"
+
+        # result = f"Processed text: {text_input}"  # Example result
+        return render_template('analysis.html', result=result)
+    return render_template('analysis.html')
