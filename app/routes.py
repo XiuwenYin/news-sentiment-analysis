@@ -10,6 +10,8 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm
 from urllib.parse import urlsplit
 
+from flask_login import login_required
+
 
 @app.route('/')
 @app.route('/index')
@@ -71,7 +73,7 @@ def register():
 
 # upload页面
 @app.route('/upload', methods=['GET', 'POST'])
-# @login_required  
+@login_required  
 def upload():
     if request.method == 'POST':
         news_content = request.form['news_content']
