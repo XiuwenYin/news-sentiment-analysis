@@ -15,7 +15,7 @@ from flask_login import login_required
 
 @app.route('/')
 @app.route('/index')
-@login_required
+# @login_required
 def index():
     posts = [
         {
