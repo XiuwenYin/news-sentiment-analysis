@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Sentiment Result{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Sentiment Analysis Result</h2>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">Uploaded Content:</h5>
+            <p class="card-text">{{ content }}</p>
+
+            <hr>
+            <h5 class="card-title">Detected Sentiment:</h5>
+            <p class="card-text text-success fw-bold">{{ result }}</p>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{{ url_for('upload') }}" class="btn btn-primary">Analyze Another</a>
+        <a href="{{ url_for('share') }}" class="btn btn-outline-secondary">Go to My Share</a>
+    </div>
+</div>
+{% endblock %}
