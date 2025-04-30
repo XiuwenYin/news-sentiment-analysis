@@ -1,7 +1,7 @@
 from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
 
-from app.models import User
+from app.models import User, Post, db
 from flask import render_template, flash, redirect, url_for, request
 
 from app import app, db
@@ -60,18 +60,25 @@ def register():
     return render_template("register.html", title="Register", form=form)
 
 
-# upload页面
 @app.route("/upload", methods=["GET", "POST"])
 @login_required
 def upload():
     if request.method == "POST":
         news_content = request.form["news_content"]
+        sentiment_result = "Positive"  # 占位
 
-        # 占位用
-        sentiment_result = f"result of sentiment: positive"
+        # 保存到Post并提交
+        post = Post(body=news_content, author=current_user)
+        db.session.add(post)
+        db.session.commit()
 
-        return render_template(
-            "visualize.html", content=news_content, result=sentiment_result
-        )
+        return render_template("visualize.html", content=news_content, result=sentiment_result)
 
     return render_template("upload.html", title="Upload News")
+
+
+@app.route("/share")
+@login_required
+def share():
+    return render_template("share.html")
+
