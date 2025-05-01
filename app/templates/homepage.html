@@ -11,7 +11,7 @@
             <div class="hero-content">
                 <h1>Intelligent news sentiment analysis</h1>
                 <p>Easily upload or input news content, instantly gain emotional insights</p>
-                <a href="#" class="btn custom-btn mt-4">Start analyzing</a>
+                <a href="{{ url_for('upload') }}" class="btn custom-btn mt-4">Start analyzing</a>
             </div>
         </div>
     </section>
@@ -30,21 +30,17 @@
         <div class="content">
             <!-- 概述 -->
             <h2 id="overview">Overview</h2>
+            <h3>
+                Core Idea
+            </h3>
             <p>
-                This product uses text analysis technology to deeply mine data, extracting categories, classifications,
-                entities, keywords, emotions, feelings, relationships, and grammar.
+                Use Natural Language Processing (NLU) models to extract meaning from text, identify
+                intent, and comprehend context. 
             </p>
-            <p>
-                Natural Language Understanding (NLU) is a top-notch text analysis service that refers to the ability of
-                computer systems to understand human language, involving extracting meaning from text, identifying
-                intent, and comprehending context. </p>
             <ul>
-                <li>Intention recognition: Determine the user's intention, such as querying information, issuing
-                    instructions, etc.</li>
-                <li>Sentiment analysis: Determine the emotional orientation of the text, such as positive, negative, or
-                    neutral.</li>
-                <li>Entity Recognition: Extract specific information from text, such as names, locations, dates, etc.
-                </li>
+                <li>Detecting whether a product review is positive or negative</li>
+                <li>Analyzing news article tone</li>
+                <li>Understanding emotional tone in user feedback or social media posts</li>
             </ul>
 
             <!-- 功能 -->
