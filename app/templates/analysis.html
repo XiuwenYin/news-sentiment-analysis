@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="text-center">Text Sentiment Analysing</h1>
+    <form class="p-3 text-center" action="" method="post">
+        <div class="form-group">
+            <label for="textInput">Enter text or paste an article below:</label>
+            <textarea id="textInput" name="textInput" class="form-control" rows="6" placeholder="Type your text here..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Analyze</button>
+    </form>
+    {% if result %}
+        <div class="alert alert-info mt-3">
+            <h4>Analysis Result:</h4>
+            <p>{{ result }}</p>
+        </div>
+    {% endif %}
+
+    {% if counter %}
+        <div>
+            <canvas id="myChart" style="max-width: 600px; max-height: 400px;"></canvas>
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        
+        <script>
+            const ctx = document.getElementById('myChart');
+        
+            new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Negative', 'Neutral', 'Positive'],
+                datasets: [{
+                    label: 'The Number of Samples',
+                    data: JSON.parse('{{ counter | tojson }}'),
+                    backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(75, 192, 192, 0.6)'], // Colors for each bar
+                    borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)'], // Border colors for each bar
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+            });
+        </script>
+    {% endif %}
+
+{% endblock %}

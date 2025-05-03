@@ -7,9 +7,18 @@ from flask import render_template, flash, redirect, url_for, request
 from app import app, db
 from app.forms import LoginForm, RegistrationForm
 from urllib.parse import urlsplit
+from transformers import (
+    AutoTokenizer, 
+    AutoModelForTokenClassification, 
+    TokenClassificationPipeline,
+    pipeline,
+)
+from transformers.pipelines import AggregationStrategy
 
+import requests
 from flask_login import login_required
-
+import numpy as np
+import feedparser
 
 @app.route("/")
 @app.route("/index")
@@ -77,8 +86,117 @@ def upload():
     return render_template("upload.html", title="Upload News")
 
 
-@app.route("/share")
+
+@app.route("/share", methods=["GET"])
 @login_required
 def share():
-    return render_template("share.html")
+    ticker = "META"
+    keyword = "meta"
+
+    rss_url = f"https://www.news.com.au/content-feeds/latest-news-finance/"
+    # Parse the RSS feed
+    feed = feedparser.parse(rss_url)
+    
+    # Initialize the sentiment analysis pipeline
+    classifier = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment")
+    label_map = {
+        "LABEL_0": "Negative",
+        "LABEL_1": "Neutral",
+        "LABEL_2": "Positive"
+    }
+    
+    # Perform sentiment analysis on each entry
+    analyzed_entries = [0,0,0]
+    for entry in feed.entries:
+        summary = entry.title
+        sentiment_result = classifier(summary)[0]
+        # sentiment = label_map[sentiment_result["label"]]
+        #
+        # analyzed_entries.append({
+        #     "title": title,
+        #     "sentiment": sentiment,
+        #     "confidence": f"{confidence:.2%}"
+        # })
+        # Increment the corresponding counter in the data list
+        if sentiment_result["label"] == "LABEL_0":
+            analyzed_entries[0] += 1
+        if sentiment_result["label"] == "LABEL_1":
+            analyzed_entries[1] += 1
+        if sentiment_result["label"] == "LABEL_2":
+            analyzed_entries[2] += 1
+    
+    # Pass the analyzed entries to the template
+    return render_template("share.html", counter=analyzed_entries)
+
+@app.route('/analysis', methods=['GET', 'POST'])
+def analysis():
+    label_map = {
+        "LABEL_0": "Negative",
+        "LABEL_1": "Neutral",
+        "LABEL_2": "Positive"
+    }
+
+    result = None
+    if request.method == 'POST':
+        text_input = request.form.get('textInput', '')
+
+        # Perform sentiment analysis or other processing here
+        classifier = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment")
+        output = classifier(text_input)
+
+        output_dict = output[0]  # <- this is a dict inside a list
+        sentiment = label_map[output_dict["label"]]
+        confidence = output_dict["score"]
+        result = f"Sentiment: {sentiment} ({confidence:.2%} confidence)"
+
+        # Keywords Extraction
+
+        # Define keyphrase extraction pipeline
+        class KeyphraseExtractionPipeline(TokenClassificationPipeline):
+            def __init__(self, model, *args, **kwargs):
+                super().__init__(
+                    model=AutoModelForTokenClassification.from_pretrained(model),
+                    tokenizer=AutoTokenizer.from_pretrained(model),
+                    *args,
+                    **kwargs
+                )
+
+            def postprocess(self, all_outputs):
+                results = super().postprocess(
+                    all_outputs=all_outputs,
+                    aggregation_strategy=AggregationStrategy.FIRST,
+                )
+                return np.unique([result.get("word").strip() for result in results])
+        
+        # Load pipeline
+        model_keywords = "ml6team/keyphrase-extraction-distilbert-inspec"
+        extractor = KeyphraseExtractionPipeline(model=model_keywords)
+
+        # Extract keywords and analyze sentiment of every keyword
+        keywords = extractor(text_input)
+        keywords_sentiment = []
+        data = [0, 0, 0]
+        for keyword in keywords:
+            keyword_sentiment = classifier(keyword)
+            keyword_sentiment_dict = keyword_sentiment[0]
+            # sentiment = label_map[keyword_sentiment_dict["label"]]
+            # confidence = keyword_sentiment_dict["score"]
+            # keywords_sentiment.append(f"Keyword: {keyword}, Sentiment: {sentiment} ({confidence:.2%} confidence)")
+
+            # Increment the corresponding counter in the data list
+            if keyword_sentiment_dict["label"] == "LABEL_0":
+                data[0] += 1
+            if keyword_sentiment_dict["label"] == "LABEL_1":
+                data[1] += 1
+            if keyword_sentiment_dict["label"] == "LABEL_2":
+                data[2] += 1
+
+        # result = f"Processed text: {text_input}"  # Example result
+        return render_template('analysis.html', result=result, counter=data)
+    return render_template('analysis.html')
+
+
+@app.route('/visualization', methods=['GET'])
+def visualization():
+    return render_template("visualization.html")
 
