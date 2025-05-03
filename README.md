@@ -1,4 +1,11 @@
 # news-sentiment-analysis
+Need to install the following:
+```
+pip install transformers
+```
+```
+pip3 install torch torchvision
+```
 
 ## Dev Env Setup
 ### Create virtual env
