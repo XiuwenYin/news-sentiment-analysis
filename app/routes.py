@@ -10,6 +10,9 @@ from urllib.parse import urlsplit
 
 from flask_login import login_required
 
+import re
+from app.forms import UploadForm
+
 
 @app.route("/")
 @app.route("/index")
@@ -64,21 +67,19 @@ def register():
         db.session.commit()
         flash("Congratulations, you are now a registered user!")
         return redirect(url_for("login"))
-    return render_template("register.html",
-        title="Register",
-        hero_title="Create Your Account",
-        hero_subtitle="Join us to analyze and share news sentiment",
-        hero_button_text=None,
-        hero_button_link=None,
-        form=form 
-    )
+    return render_template("register.html",form=form)
 
 
 @app.route("/upload", methods=["GET", "POST"])
 @login_required
 def upload():
-    if request.method == "POST":
-        news_content = request.form["news_content"]
+    form = UploadForm()
+    if form.validate_on_submit():  # 正确方式：自动验证 POST + CSRF token
+        news_content = form.news_content.data
+        
+        # 文本分析逻辑
+        char_count = len(news_content)
+        sentence_count = len([s for s in re.split(r'[.!?]', news_content) if s.strip()])
         sentiment_result = "Positive"  # 占位
 
         # 保存到Post并提交
@@ -86,19 +87,34 @@ def upload():
         db.session.add(post)
         db.session.commit()
 
-        return render_template("visualize.html", content=news_content, result=sentiment_result)
+        return render_template("visualize.html",
+                               content=news_content,
+                               result=sentiment_result,
+                               char_count=char_count,
+                               sentence_count=sentence_count)
 
-    return render_template("upload.html",
-        title="Upload News",
-        hero_title="Upload or Input News",
-        hero_subtitle="Analyze news sentiment instantly using our intelligent engine",
-        hero_button_text=None,
-        hero_button_link=None
-    )
-
+    # GET请求或验证失败则渲染上传页面
+    return render_template("upload.html", form=form)
 
 @app.route("/share")
 @login_required
 def share():
     return render_template("share.html")
+
+@app.route("/history")
+@login_required
+def history():
+    posts = Post.query.filter_by(user_id=current_user.id).order_by(Post.timestamp.desc()).all()
+    return render_template("history.html", posts=posts)
+
+@app.route("/post/<int:post_id>")
+@login_required
+def post_detail(post_id):
+    post = Post.query.get_or_404(post_id)
+    char_count = len(post.body)
+    sentence_count = len([s for s in re.split(r'[.!?]', post.body) if s.strip()])
+    return render_template("visualize.html", content=post.body, result=post.sentiment,
+                           char_count=char_count, sentence_count=sentence_count)
+
+
 

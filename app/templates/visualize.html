@@ -11,6 +11,10 @@
             <h5 class="card-title">Uploaded Content:</h5>
             <p class="card-text">{{ content }}</p>
 
+            <!-- 添加字符数和句子数统计 -->
+            <p><strong>Character count:</strong> {{ char_count }}</p>
+            <p><strong>Sentence count:</strong> {{ sentence_count }}</p>
+
             <hr>
             <h5 class="card-title">Detected Sentiment:</h5>
             <p class="card-text text-success fw-bold">{{ result }}</p>

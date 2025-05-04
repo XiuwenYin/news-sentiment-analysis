@@ -36,6 +36,8 @@ class Post(db.Model):
         index=True, default=lambda: datetime.now(timezone.utc))
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id),
                                                index=True)
+    # 情感分析字数统计：新增字段
+    sentiment: so.Mapped[str] = so.mapped_column(sa.String(64), nullable=True)
 
     author: so.Mapped[User] = so.relationship(back_populates='posts')
 
