@@ -1,198 +1,127 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sentiment Analysis</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/homepage.css') }}">
+{% block title %}Homepage{% endblock %}
 
+{% block content %}
+<!-- 核心功能区 -->
+<section class="container-left">
+    <!-- 左侧导航栏 -->
+    <div class="sidebar">
+        <a href="#overview" class="active">Overview</a>
+        <a href="#features">Features</a>
+        <a href="#benefits">Benefits</a>
+        <a href="#Applicable scenarios">Applicable scenarios</a>
+    </div>
 
-<body>
-    <!-- 顶部导航栏 Top navigation bar-->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">NewsSentiment</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+    <!-- 右侧内容 -->
+    <div class="content">
+        <!-- 概述 -->
+        <h2 id="overview">Purpose</h2>
+        <p>
+            This product uses text analysis technology to deeply mine data, extracting categories, classifications,
+            entities, keywords, emotions, feelings, relationships, and grammar.
+        </p>
+        <p>
+            This product is dedicated to news sentiment analysis. Users can obtain positive, negative, neutral and
+            other emotional information by uploading news texts, which has multiple meanings for individuals.</p>
+        <ul>
+            <li><strong>Information filtering</strong><br>Individuals can quickly obtain the emotional inclination of
+                news, help
+                judge the credibility and importance of information, and make more informed decisions.</li>
+            <li><strong>Emotional regulation</strong><br>Understanding news emotions helps individuals manage their
+                emotional
+                reactions and avoid unnecessary anxiety and emotional fluctuations caused by negative news.</li>
+            <li><strong>Decision basis</strong><br>In life or investment decisions, one can refer to the results of news
+                sentiment
+                analysis to help individuals assess risks and opportunities.</li>
+        </ul>
 
-                    <!-- Home -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Home page</a>
-                    </li>
-
-                    <!-- Upload / Input (Dropdown) -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="uploadInputDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Upload / Input
-                        </a>
-                        <ul class="dropdown-menu text-center" aria-labelledby="uploadInputDropdown">
-                            <li><a class="dropdown-item" href="{{ url_for('upload') }}">Upload File</a></li>
-                            <li><a class="dropdown-item" href="#">Input Text</a></li>
-                        </ul>
-                    </li>
-
-
-                    <!-- Analysis Result (Dropdown) -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="resultDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Result
-                        </a>
-                        <ul class="dropdown-menu text-center" aria-labelledby="resultDropdown">
-                            <li><a class="dropdown-item" href="#">View Results</a></li>
-                            <li><a class="dropdown-item" href="#">View Histories</a></li>
-                        </ul>
-                    </li>
-                    <!-- Other Pages -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">My Share</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('register') }}">Register</a>
-                    </li>
-                </ul>
+        <!-- 功能 -->
+        <h2 id="features">Features</h2>
+        <div class="feature-section">
+            <div class="feature-box">
+                <h4>✏️ Input text</h4>
+                <p>Directly paste news content for analysis</p>
+            </div>
+            <div class="feature-box">
+                <h4>📂 Upload files</h4>
+                <p>Support uploading and analyzing txt and docx files</p>
+            </div>
+            <div class="feature-box">
+                <h4>📊 Real time results</h4>
+                <p>Generate clear and intuitive sentiment analysis charts</p>
+            </div>
+            <div class="feature-box">
+                <h4>🤝 Result sharing</h4>
+                <p>One click sharing and analyzing data with colleagues</p>
             </div>
         </div>
-    </nav>
 
-    <!-- 主视觉区 -->
-    <section class="hero-section"
-        style="background-image: url('{{ url_for('static', filename='images/background.jpg') }}');">
-        <div class="hero-overlay">
-            <div class="hero-content">
-                <h1>Intelligent news sentiment analysis</h1>
-                <p>Easily upload or input news content, instantly gain emotional insights</p>
-                <a href="#" class="btn custom-btn mt-4">Start analyzing</a>
-            </div>
-        </div>
-    </section>
+        <!-- 好处 -->
+        <h2 id="benefits">Benefits</h2>
+        <ul>
+            <li><strong>Customer feedback insight:</strong><br>
+                Analyzing customers' emotional responses to news reports helps businesses understand user needs and
+                improve products and services.
+            </li>
 
-    <!-- 核心功能区 -->
-    <section class="container-left">
-        <!-- 左侧导航栏 -->
-        <div class="sidebar">
-            <a href="#overview" class="active">Overview</a>
-            <a href="#features">Features</a>
-            <a href="#benefits">Benefits</a>
-            <a href="#Applicable scenarios">Applicable scenarios</a>
-        </div>
+            <li><strong>Media content optimization:</strong><br>
+                News organizations can adjust their reporting strategies and content based on audience emotions, thereby
+                enhancing reader engagement and retention.
+            </li>
 
-        <!-- 右侧内容 -->
-        <div class="content">
-            <!-- 概述 -->
-            <h2 id="overview">Overview</h2>
-            <p>
-                This product uses text analysis technology to deeply mine data, extracting categories, classifications,
-                entities, keywords, emotions, feelings, relationships, and grammar.
-            </p>
-            <p>
-                Natural Language Understanding (NLU) is a top-notch text analysis service that refers to the ability of
-                computer systems to understand human language, involving extracting meaning from text, identifying
-                intent, and comprehending context. </p>
-            <ul>
-                <li>Intention recognition: Determine the user's intention, such as querying information, issuing
-                    instructions, etc.</li>
-                <li>Sentiment analysis: Determine the emotional orientation of the text, such as positive, negative, or
-                    neutral.</li>
-                <li>Entity Recognition: Extract specific information from text, such as names, locations, dates, etc.
-                </li>
-            </ul>
+            <li><strong>Social issue identification:</strong><br>
+                By analyzing sentiment in news content, organizations can identify emerging social issues and take
+                timely action through research or intervention.
+            </li>
 
-            <!-- 功能 -->
-            <h2 id="features">Features</h2>
-            <div class="feature-section">
-                <div class="feature-box">
-                    <h4>✏️ Input text</h4>
-                    <p>Directly paste news content for analysis</p>
-                </div>
-                <div class="feature-box">
-                    <h4>📂 Upload files</h4>
-                    <p>Support uploading and analyzing txt and docx files</p>
-                </div>
-                <div class="feature-box">
-                    <h4>📊 Real time results</h4>
-                    <p>Generate clear and intuitive sentiment analysis charts</p>
-                </div>
-                <div class="feature-box">
-                    <h4>🤝 Result sharing</h4>
-                    <p>One click sharing and analyzing data with colleagues</p>
-                </div>
-            </div>
-            <!-- 好处 -->
-            <h2 id="benefits">Benefits</h2>
-            <ul>
-                <li>Customer feedback insights: Analyzing customers' emotional reactions to news reports can help
-                    businesses understand user needs and optimize products and services.</li>
-                <li>Media content optimization: News organizations can adjust their reporting direction and content
-                    strategies based on audience emotional reactions to increase reader engagement.</li>
-                <li>Social problem identification: By analyzing news emotions, social concerns can be identified to
-                    assist relevant organizations in conducting research and intervention.</li>
-                <li>Cross cultural understanding: By analyzing news emotions, it is possible to identify issues of
-                    social concern and assist relevant organizations in conducting research and intervention.</li>
-            </ul>
+            <li><strong>Cross-cultural understanding:</strong><br>
+                Sentiment analysis enables better recognition of culturally sensitive topics and helps institutions
+                promote inclusivity and targeted communication across diverse audiences.
+            </li>
+        </ul>
 
-            <!-- 适用场景 -->
-            <h2 id="Applicable scenarios">Applicable scenarios</h2>
-            <div class="row g-4">
+        <!-- 适用场景 -->
+        <h2 id="Applicable scenarios">Applicable scenarios</h2>
+        <div class="row g-4">
 
-                <!-- 场景1 -->
-                <div class="col-md-4">
-                    <div class="scene-card"
-                        style="background-image: url('{{ url_for('static', filename='images/interview.webp') }}');">
-                        <div class="overlay">
-                            <h4>Public opinion analysis</h4>
-                            <p>Understand public emotional tendencies towards popular events, grasp public opinion
-                                direction, and conduct timely, effective monitoring.</p>
-                        </div>
+            <!-- 场景1 -->
+            <div class="col-md-4">
+                <div class="scene-card"
+                    style="background-image: url('{{ url_for('static', filename='images/interview.webp') }}');">
+                    <div class="overlay">
+                        <h4>Public opinion analysis</h4>
+                        <p class="text-white">Track social sentiment in real time</p>
                     </div>
                 </div>
-
-                <!-- 场景2 -->
-                <div class="col-md-4">
-                    <div class="scene-card"
-                        style="background-image: url('{{ url_for('static', filename='images/遥控.jpg') }}');">
-                        <div class="overlay">
-                            <h4>Film and Television Analysis</h4>
-                            <p>Understand users' preferences and comments on the program, and conduct targeted plot
-                                design and optimization.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 场景3 -->
-                <div class="col-md-4">
-                    <div class="scene-card"
-                        style="background-image: url('{{ url_for('static', filename='images/人物.jpg') }}');">
-                        <div class="overlay">
-                            <h4>Character reputation tracking</h4>
-                            <p>Understand the public's preference for characters or celebrities, and assist in brand
-                                marketing and risk management.</p>
-                        </div>
-                    </div>
-                </div>
-
             </div>
 
+            <!-- 场景2 -->
+            <div class="col-md-4">
+                <div class="scene-card"
+                    style="background-image: url('{{ url_for('static', filename='images/遥控.jpg') }}');">
+                    <div class="overlay">
+                        <h4>Film and Television Analysis</h4>
+                        <p>Understand users' preferences and optimize content</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 场景3 -->
+            <div class="col-md-4">
+                <div class="scene-card"
+                    style="background-image: url('{{ url_for('static', filename='images/人物.jpg') }}');">
+                    <div class="overlay">
+                        <h4>Character reputation tracking</h4>
+                        <p>Analyze perception of public figures</p>
+                    </div>
+                </div>
+            </div>
         </div>
-    </section>
+    </div>
+</section>
+{% endblock %}
 
-    <!-- 底部 -->
-    <footer class="bg-dark text-white text-center p-3">
-        <p>© 2025 NewsSentiment | Contact us | Privacy Policy</p>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script src="{{ url_for('static', filename='js/homepage.js') }}"></script>
-
-</html>
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/homepage.js') }}"></script>
+{% endblock %}
