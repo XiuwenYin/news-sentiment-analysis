@@ -36,7 +36,14 @@ def login():
             next_page = url_for("index")
         return redirect(next_page)
     # if the form is not submitted or invalid, render the login page
-    return render_template("login.html", title="Sign In", form=form)
+    return render_template("login.html",
+        title="Login",
+        hero_title="Sign In to Your Account",
+        hero_subtitle="Access your dashboard, share results, and more",
+        hero_button_text=None,
+        hero_button_link=None,
+        form=form 
+    )
 
 
 @app.route("/logout")
@@ -57,7 +64,14 @@ def register():
         db.session.commit()
         flash("Congratulations, you are now a registered user!")
         return redirect(url_for("login"))
-    return render_template("register.html", title="Register", form=form)
+    return render_template("register.html",
+        title="Register",
+        hero_title="Create Your Account",
+        hero_subtitle="Join us to analyze and share news sentiment",
+        hero_button_text=None,
+        hero_button_link=None,
+        form=form 
+    )
 
 
 @app.route("/upload", methods=["GET", "POST"])
@@ -74,7 +88,13 @@ def upload():
 
         return render_template("visualize.html", content=news_content, result=sentiment_result)
 
-    return render_template("upload.html", title="Upload News")
+    return render_template("upload.html",
+        title="Upload News",
+        hero_title="Upload or Input News",
+        hero_subtitle="Analyze news sentiment instantly using our intelligent engine",
+        hero_button_text=None,
+        hero_button_link=None
+    )
 
 
 @app.route("/share")
