@@ -1,7 +1,7 @@
 from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
 
-from app.models import User
+from app.models import User, Post, db
 from flask import render_template, flash, redirect, url_for, request
 
 from app import app, db
@@ -36,7 +36,14 @@ def login():
             next_page = url_for("index")
         return redirect(next_page)
     # if the form is not submitted or invalid, render the login page
-    return render_template("login.html", title="Sign In", form=form)
+    return render_template("login.html",
+        title="Login",
+        hero_title="Sign In to Your Account",
+        hero_subtitle="Access your dashboard, share results, and more",
+        hero_button_text=None,
+        hero_button_link=None,
+        form=form 
+    )
 
 
 @app.route("/logout")
@@ -57,21 +64,41 @@ def register():
         db.session.commit()
         flash("Congratulations, you are now a registered user!")
         return redirect(url_for("login"))
-    return render_template("register.html", title="Register", form=form)
+    return render_template("register.html",
+        title="Register",
+        hero_title="Create Your Account",
+        hero_subtitle="Join us to analyze and share news sentiment",
+        hero_button_text=None,
+        hero_button_link=None,
+        form=form 
+    )
 
 
-# upload页面
 @app.route("/upload", methods=["GET", "POST"])
 @login_required
 def upload():
     if request.method == "POST":
         news_content = request.form["news_content"]
+        sentiment_result = "Positive"  # 占位
 
-        # 占位用
-        sentiment_result = f"result of sentiment: positive"
+        # 保存到Post并提交
+        post = Post(body=news_content, author=current_user)
+        db.session.add(post)
+        db.session.commit()
 
-        return render_template(
-            "visualize.html", content=news_content, result=sentiment_result
-        )
+        return render_template("visualize.html", content=news_content, result=sentiment_result)
 
-    return render_template("upload.html", title="Upload News")
+    return render_template("upload.html",
+        title="Upload News",
+        hero_title="Upload or Input News",
+        hero_subtitle="Analyze news sentiment instantly using our intelligent engine",
+        hero_button_text=None,
+        hero_button_link=None
+    )
+
+
+@app.route("/share")
+@login_required
+def share():
+    return render_template("share.html")
+
