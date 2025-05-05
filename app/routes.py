@@ -73,6 +73,10 @@ def register():
 @app.route("/upload", methods=["GET", "POST"])
 @login_required
 def upload():
+    if not current_user.is_authenticated:
+        flash("You need to log in to upload news content.", "warning")
+        return redirect(url_for("index"))
+    
     form = UploadForm()
     if form.validate_on_submit():  # 正确方式：自动验证 POST + CSRF token
         post_title = request.form["post_title"]
@@ -88,15 +92,14 @@ def upload():
         db.session.add(post)
         db.session.commit()
 
-        return render_template("visualize.html", content=news_content, result=sentiment_result)
+        return render_template("visualize.html",
+                               content=news_content,
+                               result=sentiment_result,
+                               char_count=char_count,
+                               sentence_count=sentence_count)
 
-    return render_template("upload.html",
-        title="Upload News",
-        hero_title="Upload or Input News",
-        hero_subtitle="Analyze news sentiment instantly using our intelligent engine",
-        hero_button_text=None,
-        hero_button_link=None
-    )
+    # GET请求或验证失败则渲染上传页面
+    return render_template("upload.html", form=form)
 
 
 @app.route("/share")
