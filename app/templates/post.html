@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Post Details</h1>
+    <hr>
+    <p><strong>Author:</strong> {{ post.author.username }}</p>
+    <p><strong>Content:</strong> {{ post.body }}</p>
+    <p><strong>Timestamp:</strong> {{ post.timestamp }}</p>
+    <a href="{{ url_for('user', username=post.author.username) }}" class="btn btn-primary">Back to User's Posts</a>
+{% endblock %}

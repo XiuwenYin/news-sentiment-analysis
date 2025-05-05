@@ -75,6 +75,7 @@ def register():
 def upload():
     form = UploadForm()
     if form.validate_on_submit():  # 正确方式：自动验证 POST + CSRF token
+        post_title = request.form["post_title"]
         news_content = form.news_content.data
         
         # 文本分析逻辑
@@ -83,18 +84,20 @@ def upload():
         sentiment_result = "Positive"  # 占位
 
         # 保存到Post并提交
-        post = Post(body=news_content, author=current_user)
+        post = Post(title=post_title, body=news_content, author=current_user)
         db.session.add(post)
         db.session.commit()
 
-        return render_template("visualize.html",
-                               content=news_content,
-                               result=sentiment_result,
-                               char_count=char_count,
-                               sentence_count=sentence_count)
+        return render_template("visualize.html", content=news_content, result=sentiment_result)
 
-    # GET请求或验证失败则渲染上传页面
-    return render_template("upload.html", form=form)
+    return render_template("upload.html",
+        title="Upload News",
+        hero_title="Upload or Input News",
+        hero_subtitle="Analyze news sentiment instantly using our intelligent engine",
+        hero_button_text=None,
+        hero_button_link=None
+    )
+
 
 @app.route("/share")
 @login_required
@@ -118,3 +121,20 @@ def post_detail(post_id):
 
 
 
+
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    user = db.first_or_404(sa.select(User).where(User.username == username))
+    posts = db.session.execute(
+        sa.select(Post).where(Post.user_id == user.id).order_by(Post.timestamp.desc())
+        ).scalars().all()
+    
+    return render_template('user.html', user=user, posts=posts)
+
+
+@app.route('/post/<int:post_id>')
+@login_required
+def post(post_id):
+    post = db.first_or_404(sa.select(Post).where(Post.id == post_id))
+    return render_template('post.html', post=post)
