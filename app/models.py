@@ -33,13 +33,15 @@ class Post(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     title: so.Mapped[str] = so.mapped_column(sa.String(100))
     body: so.Mapped[str] = so.mapped_column(sa.String(140))
-    sentiment: so.Mapped[Optional[str]] = so.mapped_column(sa.String(20), nullable=True)
+    # sentiment: so.Mapped[Optional[str]] = so.mapped_column(sa.String(20), nullable=True)
     timestamp: so.Mapped[datetime] = so.mapped_column(
         index=True, default=lambda: datetime.now(timezone.utc))
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id),
                                                index=True)
     # 情感分析字数统计：新增字段
-    sentiment: so.Mapped[str] = so.mapped_column(sa.String(64), nullable=True)
+    # sentiment: so.Mapped[str] = so.mapped_column(sa.String(64), nullable=True)
+    sentiment: so.Mapped[Optional[str]] = so.mapped_column(sa.String(64), nullable=True)
+
 
     author: so.Mapped[User] = so.relationship(back_populates='posts')
 
