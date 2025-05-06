@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Homepage{% endblock %}
+
+{% block content %}
+<!-- 核心功能区 -->
+<section class="container-left">
+    <!-- 左侧导航栏 -->
+    <div class="sidebar">
+        <a href="#overview" class="active">Overview</a>
+        <a href="#features">Features</a>
+        <a href="#benefits">Benefits</a>
+        <a href="#Applicable scenarios">Applicable scenarios</a>
+    </div>
+
+    <!-- 右侧内容 -->
+    <div class="content">
+        <!-- 概述 -->
+        <h2 id="overview">Purpose</h2>
+        <p>
+            This product uses text analysis technology to deeply mine data, extracting categories, classifications,
+            entities, keywords, emotions, feelings, relationships, and grammar.
+        </p>
+        <p>
+            This product is dedicated to news sentiment analysis. Users can obtain positive, negative, neutral and
+            other emotional information by uploading news texts, which has multiple meanings for individuals.</p>
+        <ul>
+            <li><strong>Information filtering</strong><br>Individuals can quickly obtain the emotional inclination of
+                news, help
+                judge the credibility and importance of information, and make more informed decisions.</li>
+            <li><strong>Emotional regulation</strong><br>Understanding news emotions helps individuals manage their
+                emotional
+                reactions and avoid unnecessary anxiety and emotional fluctuations caused by negative news.</li>
+            <li><strong>Decision basis</strong><br>In life or investment decisions, one can refer to the results of news
+                sentiment
+                analysis to help individuals assess risks and opportunities.</li>
+        </ul>
+
+        <!-- 功能 -->
+        <h2 id="features">Features</h2>
+        <div class="feature-section">
+            <div class="feature-box">
+                <h4>✏️ Input text</h4>
+                <p>Directly paste news content for analysis</p>
+            </div>
+            <div class="feature-box">
+                <h4>📂 Upload files</h4>
+                <p>Support uploading and analyzing txt and docx files</p>
+            </div>
+            <div class="feature-box">
+                <h4>📊 Real time results</h4>
+                <p>Generate clear and intuitive sentiment analysis charts</p>
+            </div>
+            <div class="feature-box">
+                <h4>🤝 Result sharing</h4>
+                <p>One click sharing and analyzing data with colleagues</p>
+            </div>
+        </div>
+
+        <!-- 好处 -->
+        <h2 id="benefits">Benefits</h2>
+        <ul>
+            <li><strong>Customer feedback insight:</strong><br>
+                Analyzing customers' emotional responses to news reports helps businesses understand user needs and
+                improve products and services.
+            </li>
+
+            <li><strong>Media content optimization:</strong><br>
+                News organizations can adjust their reporting strategies and content based on audience emotions, thereby
+                enhancing reader engagement and retention.
+            </li>
+
+            <li><strong>Social issue identification:</strong><br>
+                By analyzing sentiment in news content, organizations can identify emerging social issues and take
+                timely action through research or intervention.
+            </li>
+
+            <li><strong>Cross-cultural understanding:</strong><br>
+                Sentiment analysis enables better recognition of culturally sensitive topics and helps institutions
+                promote inclusivity and targeted communication across diverse audiences.
+            </li>
+        </ul>
+
+        <!-- 适用场景 -->
+        <h2 id="Applicable scenarios">Applicable scenarios</h2>
+        <div class="row g-4">
+
+            <!-- 场景1 -->
+            <div class="col-md-4">
+                <div class="scene-card"
+                    style="background-image: url('{{ url_for('static', filename='images/interview.webp') }}');">
+                    <div class="overlay">
+                        <h4>Public opinion analysis</h4>
+                        <p class="text-white">Track social sentiment in real time</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 场景2 -->
+            <div class="col-md-4">
+                <div class="scene-card"
+                    style="background-image: url('{{ url_for('static', filename='images/遥控.jpg') }}');">
+                    <div class="overlay">
+                        <h4>Film and Television Analysis</h4>
+                        <p>Understand users' preferences and optimize content</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 场景3 -->
+            <div class="col-md-4">
+                <div class="scene-card"
+                    style="background-image: url('{{ url_for('static', filename='images/人物.jpg') }}');">
+                    <div class="overlay">
+                        <h4>Character reputation tracking</h4>
+                        <p>Analyze perception of public figures</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/homepage.js') }}"></script>
+{% endblock %}
