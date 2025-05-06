@@ -12,6 +12,9 @@ from transformers import pipeline
 import re
 from app.forms import UploadForm
 
+# from flask_wtf import csrf
+from app import csrf
+
 # Perform a label among positive, negative, and neutral.
 sentiment_classifier = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment")
 sentiment_label_map = {
@@ -184,3 +187,10 @@ def analysis():
         # result = f"Processed text: {text_input}"  # Example result
         return render_template('analysis.html', result=result)
     return render_template('analysis.html')
+
+@app.route('/auto_logout', methods=['POST'])
+@csrf.exempt
+# @login_required
+def auto_logout():
+    logout_user()
+    return '', 204

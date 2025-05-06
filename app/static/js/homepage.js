@@ -1,4 +1,3 @@
-
 // 等页面加载完成后执行
 document.addEventListener('DOMContentLoaded', function () {
     // 找到所有 dropdown

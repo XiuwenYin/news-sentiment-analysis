@@ -118,6 +118,23 @@
         <p>© 2025 NewsSentiment | Contact us | Privacy Policy</p>
     </footer>
     {% endblock %}
+    <script>
+        let lastActivity = Date.now();
+    
+        // 每次操作都会刷新活动时间
+        document.addEventListener("mousemove", () => lastActivity = Date.now());
+        document.addEventListener("keydown", () => lastActivity = Date.now());
+    
+        setInterval(() => {
+            const inactiveTime = Date.now() - lastActivity;
+            const maxInactive = 30 * 60 * 1000; // 30分钟
+            // const maxInactive = 3000; // test use
+            if (inactiveTime > maxInactive) {
+                fetch("/auto_logout", { method: "POST" });
+            }
+        }, 60 * 1000); // 每分钟检查一次
+    </script>    
+
 
 </body>
 
