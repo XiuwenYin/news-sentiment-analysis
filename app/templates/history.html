@@ -16,11 +16,15 @@
             {% for post in posts %}
             <tr>
                 <td>{{ post.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+<<<<<<< HEAD
                 <td>
                     <a href="{{ url_for('post_detail', post_id=post.id) }}">
                         {{ post.body[:80] }}...
                     </a>
                 </td>
+=======
+                <td><a href="{{ url_for('post_detail', post_id=post.id) }}">{{ post.title }}</a></td>
+>>>>>>> main
                 <td>
                     <span class="badge 
                         {% if post.sentiment == 'Positive' %}bg-success
