@@ -8,6 +8,13 @@ from flask_login import UserMixin
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
+post_shares = sa.Table(
+    'post_shares',
+    db.metadata,
+    sa.Column('post_id', sa.Integer, sa.ForeignKey('post.id'), primary_key=True),
+    sa.Column('user_id', sa.Integer, sa.ForeignKey('user.id'), primary_key=True)
+)
+
 class User(UserMixin, db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     username: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, 
@@ -18,6 +25,13 @@ class User(UserMixin, db.Model):
 
     posts: so.WriteOnlyMapped['Post'] = so.relationship(
         back_populates='author')
+    
+    # Add a relationship to track posts shared with the user
+    shared_posts: so.WriteOnlyMapped[list['Post']] = so.relationship(
+        'Post',
+        secondary='post_shares',
+        back_populates='shared_with'
+    )
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -38,6 +52,13 @@ class Post(db.Model):
         index=True, default=lambda: datetime.now(timezone.utc))
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id),
                                                index=True)
+    
+    shared_with: so.WriteOnlyMapped[list['User']] = so.relationship(
+        'User',
+        secondary='post_shares',
+        back_populates='shared_posts'
+    )
+
     # 情感分析字数统计：新增字段
     sentiment: so.Mapped[str] = so.mapped_column(sa.String(64), nullable=True)
 

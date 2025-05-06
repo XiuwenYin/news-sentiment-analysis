@@ -10,6 +10,11 @@
     {{ form.hidden_tag() }}
 
     <div class="form-group">
+      <label for="post_title">Post Title</label>
+      {{ form.post_title(class_="form-control", placeholder="Enter the post title") }}
+    </div>
+    
+    <div class="form-group">
       <label for="news_content">Please enter the news</label>
       {{ form.news_content(class_="form-control", rows=8, placeholder="Please paste the news content") }}
     </div>
