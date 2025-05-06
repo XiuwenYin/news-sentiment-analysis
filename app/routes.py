@@ -1,16 +1,15 @@
 from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
 
-from app.models import User, Post, db
+from app.models import User, Post, db, post_shares
 from flask import render_template, flash, redirect, url_for, request
 
 from app import app, db
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, SharePostForm, UploadForm
 from urllib.parse import urlsplit
 from transformers import pipeline
 
 import re
-from app.forms import UploadForm
 
 # from flask_wtf import csrf
 from app import csrf
@@ -134,11 +133,72 @@ def upload():
     return render_template("upload.html", form=form)
 
 
-
 @app.route("/share")
 @login_required
 def share():
-    return render_template("share.html")
+    # Query the shared posts explicitly
+    shared_posts = db.session.scalars(
+        sa.select(Post).join(post_shares).where(post_shares.c.user_id == current_user.id)
+    ).all()
+    user_posts = Post.query.filter_by(user_id=current_user.id).all()
+    other_users = User.query.filter(User.id != current_user.id).all()
+    form = SharePostForm()
+    return render_template(
+        "share.html", 
+        shared_posts=shared_posts, 
+        user_posts=user_posts, 
+        other_users=other_users,
+        form=form
+        )
+
+
+@app.route('/share_post/<int:post_id>', methods=['GET', 'POST'])
+@login_required
+def share_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if request.method == 'POST':
+        usernames = request.form.getlist('usernames')  # List of usernames to share with
+        for username in usernames:
+            user = User.query.filter_by(username=username).first()
+            if user and user not in post.shared_with:
+                post.shared_with.append(user)
+        db.session.commit()
+        flash('Post shared successfully!', 'success')
+        return redirect(url_for('share'))
+
+    users = User.query.filter(User.id != current_user.id).all()  # Exclude the current user
+    return render_template('share_post.html', post=post, users=users)
+
+
+@app.route('/share_post_modal', methods=['POST'])
+@login_required
+def share_post_modal():
+    post_id = request.form.get('post_id')
+    user_id = request.form.get('user_id')
+
+    post = Post.query.get_or_404(post_id)
+    user = User.query.get_or_404(user_id)
+
+    # Check if the post is already shared with the user
+    existing_share = db.session.execute(
+        sa.select(post_shares).where(
+            post_shares.c.post_id == post.id,
+            post_shares.c.user_id == user.id
+        )
+    ).first()
+
+    if not existing_share:
+        # Add a new entry to the post_shares table
+        db.session.execute(
+            post_shares.insert().values(post_id=post.id, user_id=user.id)
+        )
+        db.session.commit()
+        flash(f'Post "{post.title}" shared with {user.username}!', 'success')
+    else:
+        flash(f'Post "{post.title}" is already shared with {user.username}.', 'info')
+
+    return redirect(url_for('share'))
+
 
 @app.route("/history")
 @login_required

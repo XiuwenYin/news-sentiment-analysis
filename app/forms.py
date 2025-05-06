@@ -35,3 +35,8 @@ class RegistrationForm(FlaskForm):
 class UploadForm(FlaskForm):
     news_content = TextAreaField('News Content', validators=[DataRequired()])
     submit = SubmitField('Upload and Analyze')
+
+class SharePostForm(FlaskForm):
+    post_id = StringField('Post ID', validators=[DataRequired()])
+    user_id = StringField('User ID', validators=[DataRequired()])
+    submit = SubmitField('Share')

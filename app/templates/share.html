@@ -1,8 +1,79 @@
 {% extends "base.html" %}
 
-{% block title %}My Share{% endblock %}
+{% block title %}Share{% endblock %}
 
 {% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">My Shared Sentiment Analyses</h2>
+    <p class="text-center mb-5">Here you can view and manage your shared sentiment results.</p>
+
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        {% for post in shared_posts %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text">Overall Sentiment: <strong>{{ post.sentiment }}</strong></p>
+                    <p class="card-text">{{ post.body[:100] }}...</p>
+                    <a href="{{ url_for('post_detail', post_id=post.id) }}" class="btn btn-outline-primary">View Detail</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Share Post Button -->
+    <div class="text-center mt-5">
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#sharePostModal">Share a Post</button>
+    </div>
+</div>
+
+<!-- Share Post Modal -->
+<div class="modal fade" id="sharePostModal" tabindex="-1" aria-labelledby="sharePostModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('share_post_modal') }}">
+                {{ form.hidden_tag() }} <!-- Add this line to include the CSRF token -->
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sharePostModalLabel">Share a Post</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Step 1: Select a Post -->
+                    <div id="step1">
+                        <h5>Select a Post</h5>
+                        <div class="form-group">
+                            <select name="post_id" class="form-control" required>
+                                {% for post in user_posts %}
+                                <option value="{{ post.id }}">{{ post.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Select a User -->
+                    <div id="step2" class="d-none">
+                        <h5>Select a User to Share With</h5>
+                        <div class="form-group">
+                            <select name="user_id" class="form-control" required>
+                                {% for user in other_users %}
+                                <option value="{{ user.id }}">{{ user.username }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="prevStep" onclick="showStep(1)">Previous</button>
+                    <button type="button" class="btn btn-primary" id="nextStep" onclick="showStep(2)">Next</button>
+                    <button type="submit" class="btn btn-success d-none" id="submitShare">Share</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="container mt-5">
     <h2 class="text-center mb-4">My Shared Sentiment Analyses</h2>
     <p class="text-center mb-5">Here you can view and manage your previously shared sentiment results.</p>
@@ -57,4 +128,22 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function showStep(step) {
+        if (step === 1) {
+            document.getElementById('step1').classList.remove('d-none');
+            document.getElementById('step2').classList.add('d-none');
+            document.getElementById('nextStep').classList.remove('d-none');
+            document.getElementById('submitShare').classList.add('d-none');
+        } else if (step === 2) {
+            document.getElementById('step1').classList.add('d-none');
+            document.getElementById('step2').classList.remove('d-none');
+            document.getElementById('nextStep').classList.add('d-none');
+            document.getElementById('submitShare').classList.remove('d-none');
+        }
+    }
+</script>
 {% endblock %}

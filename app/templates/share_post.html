@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Share Post{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Share Post: {{ post.title }}</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label for="usernames">Select users to share with:</label>
+            <select name="usernames" id="usernames" class="form-control" multiple>
+                {% for user in users %}
+                <option value="{{ user.username }}">{{ user.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Share</button>
+    </form>
+</div>
+{% endblock %}
