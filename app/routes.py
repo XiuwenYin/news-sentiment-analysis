@@ -5,12 +5,11 @@ from app.models import User, Post, db, post_shares
 from flask import render_template, flash, redirect, url_for, request
 
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, SharePostForm
+from app.forms import LoginForm, RegistrationForm, SharePostForm, UploadForm
 from urllib.parse import urlsplit
 from transformers import pipeline
 
 import re
-from app.forms import UploadForm
 
 # from flask_wtf import csrf
 from app import csrf
