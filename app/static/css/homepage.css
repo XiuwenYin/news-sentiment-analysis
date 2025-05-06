@@ -243,3 +243,38 @@ h5 {
 .scenario-overlay p {
     font-size: 1rem;
 }
+
+/* 导航栏动画 */
+.navbar .nav-link,
+.navbar .navbar-brand {
+    position: relative;
+    display: inline-block;
+    transition: color .25s ease, transform .25s ease;
+}
+
+.navbar-dark .nav-link:hover,
+.navbar-dark .navbar-brand:hover {
+    color: #ffffff;    
+    transform: scale(1.08); 
+}
+
+.navbar .nav-link::after,
+.navbar .navbar-brand::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -4px;
+    width: 0;
+    height: 2px;
+    background: #ffffff;
+    transition: width .25s ease, left .25s ease;
+}
+.navbar .nav-link:hover::after,
+.navbar .navbar-brand:hover::after {
+    width: 100%;
+    left: 0; 
+}
+
+.navbar-dark .navbar-toggler-icon {
+    filter: brightness(200%);
+}
