@@ -54,7 +54,6 @@
                         <a class="nav-link" href="{{ url_for('user', username=current_user.username) }}">Profile</a>
                     </li>
 
-
                     <!-- My Share -->
                     <li class="nav-item">
                         <a class="nav-link" href="#">My Share</a>
@@ -63,22 +62,17 @@
                     <!-- Logout -->
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
-                      </li>
+                    </li>
+
                     {% else %}
-                      <li class="nav-item">
+                    <!-- When not logged in -->
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('login') }}">Login</a>
-                      </li>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+                    </li>
                     {% endif %}
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('register') }}">Register</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('analysis') }}">Analysis</a>
-                  </li>
                 </ul>
             </div>
         </div>

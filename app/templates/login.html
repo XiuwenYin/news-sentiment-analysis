@@ -3,54 +3,31 @@
 {% block title %}Sign In{% endblock %}
 
 {% block content %}
-<div class="container mt-5" style="max-width: 500px;">
-    <h2 class="text-center mb-4">Sign In</h2>
+<div class="d-flex p-2">
+    <div class="card shadow p-4 rounded-4 mx-auto" style="width: 100%; max-width: 400px;">
+        <h3 class="text-center mb-4">Login</h3>
+        <form method="post" action="{{ url_for('login') }}">
+            {{ form.hidden_tag() }}
 
-    <form method="POST" action="{{ url_for('login') }}">
-        {{ form.hidden_tag() }}
+            <div class="mb-3">
+                {{ form.username.label(class="form-label") }}
+                {{ form.username(size=32, class="form-control", id="username", aria_describedby="usernameHelp") }}
+                <div id="usernameHelp" class="form-text">We'll never share your information with anyone else.</div>
+            </div>
 
-        <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            {{ form.username(class_="form-control", placeholder="Enter username") }}
-        </div>
+            <div class="mb-3">
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(size=32, class="form-control", id="password") }}
+            </div>
 
-        <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            {{ form.password(class_="form-control", placeholder="Enter password") }}
-        </div>
+            <div class="mb-3 form-check">
+                {{ form.remember_me(class="form-check-input", id="remember_me") }}
+                <label class="form-check-label" for="remember_me">Remember me</label>
+            </div>
 
-        <div class="form-check mb-3">
-            {{ form.remember_me(class_="form-check-input") }}
-            <label class="form-check-label" for="remember_me">
-                Remember Me
-            </label>
-        </div>
-
-        <div class="d-grid">
-            {{ form.submit(class_="btn btn-primary") }}
-        </div>
-    </form>
-
-    <div class="d-flex p-2">
-        <div class="card shadow p-4 rounded-4  mx-auto" style="width: 100%; max-width: 400px;">
-            <h3 class="text-center mb-4">Login</h3>
-            <form method="post">
-                <div class="mb-3">
-                    {{ form.username.label(class="form-label") }}<br>
-                    {{ form.username(size=32, class="form-control", id="username", aria_describedby="usernameHelp") }}<br>
-                    <div id="usernameHelp" class="form-text">We'll never share your information with anyone else.</div>
-                </div>
-                <div class="mb-3">
-                    {{ form.password.label(class="form-label") }}<br>
-                    {{ form.password(size=32, class="form-control", id="password") }}<br>
-                </div>
-                <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                <label class="form-check-label" for="exampleCheck1">Check me out</label>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
-        </div>
+            {{ form.submit(class="btn btn-primary w-100") }}
+        </form>
     </div>
-    <p>New User? <a href="{{ url_for('register') }}">Click to Register!</a></p>
+</div>
+<p>New User? <a href="{{ url_for('register') }}">Click to Register!</a></p>
 {% endblock %}
