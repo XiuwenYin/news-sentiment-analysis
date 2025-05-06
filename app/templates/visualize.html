@@ -18,6 +18,19 @@
             <hr>
             <h5 class="card-title">Detected Sentiment:</h5>
             <p class="card-text text-success fw-bold">{{ result }}</p>
+
+            {% if emotion_scores %}
+            <hr>
+            <h5 class="card-title">Detected Emotions:</h5>
+            <ul class="list-group">
+                {% for emotion in emotion_scores %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ emotion.label | capitalize }}
+                    <span class="badge bg-primary rounded-pill">{{ (emotion.score * 100) | round(1) }}%</span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
         </div>
     </div>
 

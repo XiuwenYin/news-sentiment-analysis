@@ -96,30 +96,40 @@ def upload():
     if not current_user.is_authenticated:
         flash("You need to log in to upload news content.", "warning")
         return redirect(url_for("index"))
-    
+
     form = UploadForm()
-    if form.validate_on_submit():  # 正确方式：自动验证 POST + CSRF token
+    if form.validate_on_submit():
         post_title = request.form["post_title"]
         news_content = form.news_content.data
-        
-        # 文本分析逻辑
+
+        # 文字统计
         char_count = len(news_content)
         sentence_count = len([s for s in re.split(r'[.!?]', news_content) if s.strip()])
-        sentiment_result = "Positive"  # 占位
 
-        # 保存到Post并提交
+         # 情绪分析：先获取结果并排序
+        emotion_scores = emotion_classifier(news_content)[0]
+        emotion_scores_sorted = sorted(emotion_scores, key=lambda x: x['score'], reverse=True)
+
+        # 情感倾向分析（positive/neutral/negative）
+        sentiment_output = sentiment_classifier(news_content)
+        sentiment = sentiment_label_map[sentiment_output[0]["label"]]
+
+        # 保存到数据库
         post = Post(title=post_title, body=news_content, author=current_user)
+        post.sentiment = sentiment
         db.session.add(post)
         db.session.commit()
 
+        # 渲染页面，包括情绪和情感倾向
         return render_template("visualize.html",
                                content=news_content,
-                               result=sentiment_result,
+                               result=sentiment,
                                char_count=char_count,
-                               sentence_count=sentence_count)
+                               sentence_count=sentence_count,
+                               emotion_scores=emotion_scores_sorted)
 
-    # GET请求或验证失败则渲染上传页面
     return render_template("upload.html", form=form)
+
 
 
 @app.route("/share")
@@ -169,18 +179,22 @@ def analysis():
     }
 
     result = None
+    emotion_result = None
+
     if request.method == 'POST':
         text_input = request.form.get('textInput', '')
 
-        # Perform sentiment analysis or other processing here
-        classifier = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment")
-        output = classifier(text_input)
-
-        output_dict = output[0]  # <- this is a dict inside a list
-        sentiment = label_map[output_dict["label"]]
-        confidence = output_dict["score"]
+        # 情感倾向分析（积极/中立/消极）
+        output = sentiment_classifier(text_input)
+        sentiment = label_map[output[0]["label"]]
+        confidence = output[0]["score"]
         result = f"Sentiment: {sentiment} ({confidence:.2%} confidence)"
 
-        # result = f"Processed text: {text_input}"  # Example result
-        return render_template('analysis.html', result=result)
+        # 情绪分析（7种）
+        emotion_scores = emotion_classifier(text_input)[0]  # 获取第一个文本的所有情绪评分
+        top_emotion = max(emotion_scores, key=lambda x: x['score'])
+        emotion_result = f"Emotion: {top_emotion['label']} ({top_emotion['score']:.2%} confidence)"
+
+        return render_template('analysis.html', result=result, emotion_result=emotion_result)
+
     return render_template('analysis.html')
