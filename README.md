@@ -1,3 +1,10 @@
+model需要额外安装pytorch和transformers库
+```console
+$ pip install transformers
+```
+```console
+$ pip3 install torch torchvision
+```
 # news-sentiment-analysis
 
 ## Dev Env Setup

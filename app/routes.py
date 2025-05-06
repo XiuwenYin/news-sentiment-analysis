@@ -7,11 +7,31 @@ from flask import render_template, flash, redirect, url_for, request
 from app import app, db
 from app.forms import LoginForm, RegistrationForm
 from urllib.parse import urlsplit
-
-from flask_login import login_required
+from transformers import pipeline
 
 import re
 from app.forms import UploadForm
+
+# Perform a label among positive, negative, and neutral.
+sentiment_classifier = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment")
+sentiment_label_map = {
+    "LABEL_0": "Negative",
+    "LABEL_1": "Neutral",
+    "LABEL_2": "Positive"
+}
+
+# Predict emotion among anger, disgust, fear, joy, neutral, sadnes, surprise.
+#
+# Output example:
+# [[{'label': 'anger', 'score': 0.004419783595949411},
+#   {'label': 'disgust', 'score': 0.0016119900392368436},
+#   {'label': 'fear', 'score': 0.0004138521908316761},
+#   {'label': 'joy', 'score': 0.9771687984466553},
+#   {'label': 'neutral', 'score': 0.005764586851000786},
+#   {'label': 'sadness', 'score': 0.002092392183840275},
+#   {'label': 'surprise', 'score': 0.008528684265911579}]]
+# 每个输出要自己从中提取出最高的
+emotion_classifier = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base", return_all_scores=True)
 
 
 @app.route("/")
@@ -123,8 +143,6 @@ def post_detail(post_id):
                            char_count=char_count, sentence_count=sentence_count)
 
 
-
-
 @app.route('/user/<username>')
 @login_required
 def user(username):
@@ -141,3 +159,28 @@ def user(username):
 def post(post_id):
     post = db.first_or_404(sa.select(Post).where(Post.id == post_id))
     return render_template('post.html', post=post)
+
+@app.route('/analysis', methods=['GET', 'POST'])
+def analysis():
+    label_map = {
+        "LABEL_0": "Negative",
+        "LABEL_1": "Neutral",
+        "LABEL_2": "Positive"
+    }
+
+    result = None
+    if request.method == 'POST':
+        text_input = request.form.get('textInput', '')
+
+        # Perform sentiment analysis or other processing here
+        classifier = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment")
+        output = classifier(text_input)
+
+        output_dict = output[0]  # <- this is a dict inside a list
+        sentiment = label_map[output_dict["label"]]
+        confidence = output_dict["score"]
+        result = f"Sentiment: {sentiment} ({confidence:.2%} confidence)"
+
+        # result = f"Processed text: {text_input}"  # Example result
+        return render_template('analysis.html', result=result)
+    return render_template('analysis.html')
