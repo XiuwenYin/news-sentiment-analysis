@@ -193,7 +193,7 @@ def analysis():
         confidence = output[0]["score"]
         result = f"Sentiment: {sentiment} ({confidence:.2%} confidence)"
 
-        # 情绪分析
+        # 情绪分析，细化
         emotion_scores = emotion_classifier(text_input)[0]
         top_emotion = max(emotion_scores, key=lambda x: x['score'])
         emotion_result = f"Emotion: {top_emotion['label']} ({top_emotion['score']:.2%} confidence)"
