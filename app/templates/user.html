@@ -1,18 +1,64 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container mt-4">
-        <h1 class="mb-4">Posts by {{ user.username }}</h1>
-        <hr>
-        <div class="list-group">
-            {% for post in posts %}
-            <a href="{{ url_for('post', post_id=post.id) }}" class="list-group-item list-group-item-action">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">{{ post.title }}</h5>
-                    <small class="text-muted">{{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
-                </div>
-            </a>
-            {% endfor %}
+<div class="container mt-4">
+    <h1 class="mb-4">Posts by {{ user.username }}</h1>
+    <hr>
+
+    <!-- Bar Chart -->
+    <div class="mb-4 text-center">
+        <div style="max-width: 600px; margin: 0 auto;">
+            <canvas id="sentimentChart"></canvas>
         </div>
     </div>
+
+    <div class="list-group">
+        {% for post in posts %}
+        <a href="{{ url_for('post', post_id=post.id) }}" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ post.title }}</h5>
+                <small class="text-muted">{{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Data for the chart
+    const labelCounts = {
+        Negative: {{ label_counts['Negative'] }},
+        Neutral: {{ label_counts['Neutral'] }},
+        Positive: {{ label_counts['Positive'] }}
+    };
+
+    // Render the chart
+    const ctx = document.getElementById('sentimentChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Negative', 'Neutral', 'Positive'],
+            datasets: [{
+                label: 'Sentiment Counts',
+                data: [labelCounts.Negative, labelCounts.Neutral, labelCounts.Positive],
+                backgroundColor: ['#dc3545', '#6c757d', '#28a745'], // Colors for Negative, Neutral, Positive
+                borderColor: ['#dc3545', '#6c757d', '#28a745'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true, // Maintain aspect ratio
+            aspectRatio: 2, // Set aspect ratio (width/height)
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}

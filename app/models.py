@@ -58,9 +58,8 @@ class Post(db.Model):
         back_populates='shared_posts'
     )
 
-    # 情感分析字数统计：新增字段
     sentiment: so.Mapped[str] = so.mapped_column(sa.String(64), nullable=True)
-
+    #label: so.Mapped[str] = so.mapped_column(sa.String(64), nullable=True)
     author: so.Mapped[User] = so.relationship(back_populates='posts')
 
     def __repr__(self):

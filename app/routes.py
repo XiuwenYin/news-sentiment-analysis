@@ -234,7 +234,14 @@ def user(username):
         sa.select(Post).where(Post.user_id == user.id).order_by(Post.timestamp.desc())
         ).scalars().all()
     
-    return render_template('user.html', user=user, posts=posts)
+    # Calculate label counts
+    label_counts = {
+        'Negative': sum(1 for post in posts if post.sentiment == 'Negative'),
+        'Neutral': sum(1 for post in posts if post.sentiment == 'Neutral'),
+        'Positive': sum(1 for post in posts if post.sentiment == 'Positive')
+    }
+
+    return render_template('user.html', user=user, posts=posts, label_counts=label_counts)
 
 
 @app.route('/post/<int:post_id>')
