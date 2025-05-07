@@ -4,16 +4,21 @@
 
 {% block content %}
 <div class="container mt-5">
+    <!-- Page heading with the post title -->
     <h2 class="text-center mb-4">Share Post: {{ post.title }}</h2>
+
+    <!-- Form to select users and share the post -->
     <form method="POST">
         <div class="form-group">
             <label for="usernames">Select users to share with:</label>
             <select name="usernames" id="usernames" class="form-control" multiple>
+                <!-- Dynamically populate user options -->
                 {% for user in users %}
                 <option value="{{ user.username }}">{{ user.username }}</option>
                 {% endfor %}
             </select>
         </div>
+        <!-- Submit button -->
         <button type="submit" class="btn btn-primary mt-3">Share</button>
     </form>
 </div>

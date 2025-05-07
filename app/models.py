@@ -5,9 +5,9 @@ import sqlalchemy.orm as so
 from app import db, login
 from flask_login import UserMixin
 
-
 from werkzeug.security import generate_password_hash, check_password_hash
 
+# Association table to track which posts are shared with which users
 post_shares = sa.Table(
     'post_shares',
     db.metadata,
@@ -52,15 +52,17 @@ class Post(db.Model):
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id),
                                                index=True)
     
+    # Many-to-many relationship: post ←→ users it is shared with
     shared_with: so.WriteOnlyMapped[list['User']] = so.relationship(
         'User',
         secondary='post_shares',
         back_populates='shared_posts'
     )
 
-    # 情感分析字数统计：新增字段
+    # Add a column for sentiment analysis, this will store the sentiment label (e.g., 'positive', 'negative', 'neutral')
     sentiment: so.Mapped[str] = so.mapped_column(sa.String(64), nullable=True)
 
+    # Many-to-one relationship: post → author (user)
     author: so.Mapped[User] = so.relationship(back_populates='posts')
 
     def __repr__(self):

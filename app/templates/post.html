@@ -1,10 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <!-- Post details page -->
     <h1>Post Details</h1>
     <hr>
+
+    <!-- Display author username -->
     <p><strong>Author:</strong> {{ post.author.username }}</p>
+
+    <!-- Display post title -->
     <p><strong>Content:</strong> {{ post.body }}</p>
+
+    <!-- Display post sentiment -->
     <p><strong>Timestamp:</strong> {{ post.timestamp }}</p>
+
+    <!-- Display shared-with users -->
+    <p><strong>Shared With:</strong>
+        {% if post.shared_with %}
+            {% for user in post.shared_with %}
+                {{ user.username }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        {% else %}
+            No users yet.
+        {% endif %}
+    </p>
+
+    <!-- Button to navigate back to the author's posts -->
     <a href="{{ url_for('user', username=post.author.username) }}" class="btn btn-primary">Back to User's Posts</a>
 {% endblock %}
