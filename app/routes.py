@@ -11,6 +11,9 @@ from transformers import pipeline
 
 import re
 
+#日期分组创建字典
+from collections import defaultdict
+
 # from flask_wtf import csrf
 from app import csrf
 
@@ -204,7 +207,13 @@ def share_post_modal():
 @login_required
 def history():
     posts = Post.query.filter_by(user_id=current_user.id).order_by(Post.timestamp.desc()).all()
-    return render_template("history.html", posts=posts)
+    
+    grouped_posts = defaultdict(list)
+    for post in posts:
+        date_str = post.timestamp.strftime('%Y-%m-%d')  # 按天归类
+        grouped_posts[date_str].append(post)
+
+    return render_template("history.html", grouped_posts=grouped_posts)
 
 @app.route("/post/<int:post_id>")
 @login_required
