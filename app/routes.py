@@ -146,12 +146,13 @@ def share():
     user_posts = Post.query.filter_by(user_id=current_user.id).all()
     other_users = User.query.filter(User.id != current_user.id).all()
     form = SharePostForm()
+
     return render_template(
         "share.html", 
         shared_posts=shared_posts, 
         user_posts=user_posts, 
         other_users=other_users,
-        form=form
+        form=form,
         )
 
 
