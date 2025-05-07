@@ -11,7 +11,7 @@ from transformers import pipeline
 
 import re
 
-#日期分组创建字典
+# from flask import jsonify
 from collections import defaultdict
 
 # from flask_wtf import csrf
@@ -35,7 +35,7 @@ sentiment_label_map = {
 #   {'label': 'neutral', 'score': 0.005764586851000786},
 #   {'label': 'sadness', 'score': 0.002092392183840275},
 #   {'label': 'surprise', 'score': 0.008528684265911579}]]
-# 每个输出要自己从中提取出最高的
+# Need to extract the highest score from each output
 emotion_classifier = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base", return_all_scores=True)
 
 
@@ -107,25 +107,25 @@ def upload():
         post_title = request.form["post_title"]
         news_content = form.news_content.data
 
-        # 文字统计
+        # counting characters and sentences
         char_count = len(news_content)
         sentence_count = len([s for s in re.split(r'[.!?]', news_content) if s.strip()])
 
-         # 情绪分析：先获取结果并排序
+         # sentiment analysis
         emotion_scores = emotion_classifier(news_content)[0]
         emotion_scores_sorted = sorted(emotion_scores, key=lambda x: x['score'], reverse=True)
 
-        # 情感倾向分析（positive/neutral/negative）
+        # Sentiment analysis (positive/neutral/negative)
         sentiment_output = sentiment_classifier(news_content)
         sentiment = sentiment_label_map[sentiment_output[0]["label"]]
 
-        # 保存到数据库
+        # Save to database
         post = Post(title=post_title, body=news_content, author=current_user)
         post.sentiment = sentiment
         db.session.add(post)
         db.session.commit()
 
-        # 渲染页面，包括情绪和情感倾向
+        # Render the page, including emotion and sentiment analysis
         return render_template("visualize.html",
                                content=news_content,
                                result=sentiment,
@@ -206,11 +206,12 @@ def share_post_modal():
 @app.route("/history")
 @login_required
 def history():
+    # Query the posts created by the current user
     posts = Post.query.filter_by(user_id=current_user.id).order_by(Post.timestamp.desc()).all()
     
     grouped_posts = defaultdict(list)
     for post in posts:
-        date_str = post.timestamp.strftime('%Y-%m-%d')  # 按天归类
+        date_str = post.timestamp.strftime('%Y-%m-%d')
         grouped_posts[date_str].append(post)
 
     return render_template("history.html", grouped_posts=grouped_posts)
@@ -218,6 +219,7 @@ def history():
 @app.route("/post/<int:post_id>")
 @login_required
 def post_detail(post_id):
+    # Query the post by ID
     post = Post.query.get_or_404(post_id)
     char_count = len(post.body)
     sentence_count = len([s for s in re.split(r'[.!?]', post.body) if s.strip()])
@@ -256,13 +258,13 @@ def analysis():
     if request.method == 'POST':
         text_input = request.form.get('textInput', '')
 
-        # 情感倾向分析
+        # Sentiment Analysis
         output = sentiment_classifier(text_input)
         sentiment = label_map[output[0]["label"]]
         confidence = output[0]["score"]
         result = f"Sentiment: {sentiment} ({confidence:.2%} confidence)"
 
-        # 情绪分析，细化
+        # Emotion analysis, detailed
         emotion_scores = emotion_classifier(text_input)[0]
         top_emotion = max(emotion_scores, key=lambda x: x['score'])
         emotion_result = f"Emotion: {top_emotion['label']} ({top_emotion['score']:.2%} confidence)"
