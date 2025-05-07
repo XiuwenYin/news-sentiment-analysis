@@ -59,10 +59,8 @@ class Post(db.Model):
         back_populates='shared_posts'
     )
 
-    # Add a column for sentiment analysis, this will store the sentiment label (e.g., 'positive', 'negative', 'neutral')
     sentiment: so.Mapped[str] = so.mapped_column(sa.String(64), nullable=True)
-
-    # Many-to-one relationship: post → author (user)
+    #label: so.Mapped[str] = so.mapped_column(sa.String(64), nullable=True)
     author: so.Mapped[User] = so.relationship(back_populates='posts')
 
     def __repr__(self):

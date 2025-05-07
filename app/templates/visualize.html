@@ -22,14 +22,39 @@
             {% if emotion_scores %}
             <hr>
             <h5 class="card-title">Detected Emotions:</h5>
-            <ul class="list-group">
-                {% for emotion in emotion_scores %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    {{ emotion.label | capitalize }}
-                    <span class="badge bg-primary rounded-pill">{{ (emotion.score * 100) | round(1) }}%</span>
-                </li>
-                {% endfor %}
-            </ul>
+            <div class="table-responsive">
+                <table class="table align-middle" style="border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th style="border: none;">Emotion</th>
+                            <th style="border: none;"><em>Magnitude</em></th>
+                            <th style="border: none;">Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for emotion in emotion_scores %}
+                        {% set score = emotion.score %}
+                        {% set opacity = 0.3 + (score * 0.7) %}
+                        {% if result == 'Positive' %}
+                        {% set color = '0, 128, 0' %}
+                        {% elif result == 'Negative' %}
+                        {% set color = '220, 20, 60' %}
+                        {% else %}
+                        {% set color = '128, 128, 128' %}
+                        {% endif %}
+                        {% set rgba = 'rgba(' ~ color ~ ', ' ~ opacity ~ ')' %}
+
+                        <tr>
+                            <td>{{ emotion.label | capitalize }}</td>
+                            <td><em>{{ '%.2f' % emotion.score }}</em></td>
+                            <td style="background-color: {{ rgba }}; color: white; font-weight: bold;">
+                                +{{ '%.3f' % emotion.score }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
             {% endif %}
         </div>
     </div>
