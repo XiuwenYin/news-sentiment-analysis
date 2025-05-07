@@ -9,7 +9,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/homepage.css') }}">
     <style>
         /* Prevent main content from sliding under the fixed navbar */
-        body { padding-top: 70px; }
+        body {
+            padding-top: 70px;
+        }
     </style>
 </head>
 
@@ -32,7 +34,7 @@
                     <!-- Upload/Input dropdown -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-white" href="#" id="uploadDropdown" role="button"
-                           data-bs-toggle="dropdown">
+                            data-bs-toggle="dropdown">
                             Upload/Input
                         </a>
                         <ul class="dropdown-menu">
@@ -44,7 +46,7 @@
                     <!-- Result dropdown -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-white" href="#" id="resultDropdown" role="button"
-                           data-bs-toggle="dropdown">
+                            data-bs-toggle="dropdown">
                             Result
                         </a>
                         <ul class="dropdown-menu">
@@ -54,7 +56,8 @@
 
                     <!-- User Profile -->
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ url_for('user', username=current_user.username) }}">Profile</a>
+                        <a class="nav-link text-white"
+                            href="{{ url_for('user', username=current_user.username) }}">Profile</a>
                     </li>
 
                     <!-- My Share -->
@@ -83,7 +86,7 @@
 
     <!-- Hero Section -->
     <section class="hero-section"
-             style="background-image: url('{{ url_for('static', filename='images/background.jpg') }}');">
+        style="background-image: url('{{ url_for('static', filename='images/background.jpg') }}');">
         <div class="hero-overlay">
             <div class="hero-content">
                 <h1>Intelligent news sentiment analysis</h1>
@@ -140,5 +143,6 @@
         }, 60 * 1000); // Check every minute
     </script>
 </body>
+{% block scripts %}{% endblock %}
 
 </html>

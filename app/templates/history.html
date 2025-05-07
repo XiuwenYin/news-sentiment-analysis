@@ -1,33 +1,38 @@
 {% extends "base.html" %}
-{% block title %}History{% endblock %}
-
 {% block content %}
 <div class="container mt-5">
-    <h2 class="text-center my-4">Your Analysis History</h2>
-    <table class="table table-bordered">
-        <thead>
+    <h2 class="text-center mb-4">Your Analysis History</h2>
+
+    {% for date, posts in grouped_posts.items() %}
+    <h4 class="mt-4">{{ date }}</h4>
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
             <tr>
-                <th>Timestamp</th>
-                <th>News Snippet</th>
-                <th>Sentiment</th>
+                <th scope="col">Time</th>
+                <th scope="col">News Title</th>
+                <th scope="col">Sentiment</th>
             </tr>
         </thead>
         <tbody>
             {% for post in posts %}
             <tr>
-                <td>{{ post.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>{{ post.timestamp.strftime('%H:%M:%S') }}</td>
                 <td><a href="{{ url_for('post_detail', post_id=post.id) }}">{{ post.title }}</a></td>
                 <td>
-                    <span class="badge 
-                        {% if post.sentiment == 'Positive' %}bg-success
-                        {% elif post.sentiment == 'Negative' %}bg-danger
-                        {% else %}bg-secondary{% endif %}">
-                        {{ post.sentiment }}
-                    </span>
+                    {% if post.sentiment == 'Positive' %}
+                    <span class="badge bg-success">Positive</span>
+                    {% elif post.sentiment == 'Negative' %}
+                    <span class="badge bg-danger">Negative</span>
+                    {% elif post.sentiment == 'Neutral' %}
+                    <span class="badge bg-secondary">Neutral</span>
+                    {% else %}
+                    <span class="badge bg-dark">None</span>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    {% endfor %}
 </div>
 {% endblock %}
