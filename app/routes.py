@@ -284,7 +284,7 @@ def analysis():
 # auto logout
 @app.route('/auto_logout', methods=['POST'])
 @csrf.exempt
-# @login_required
+@login_required
 def auto_logout():
     logout_user()
     return '', 204
