@@ -40,8 +40,15 @@ sentiment_label_map = {
 #   {'label': 'sadness', 'score': 0.002092392183840275},
 #   {'label': 'surprise', 'score': 0.008528684265911579}]]
 # Need to extract the highest score from each output
-emotion_classifier = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base", return_all_scores=True)
+emotion_classifier = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base",top_k=None)
 
+# 新闻分类器
+# 使用公开模型，无需登录 token
+news_category_classifier = pipeline(
+    "text-classification",
+    model="joeddav/distilbert-base-uncased-agnews-student",
+    top_k=1  # 只返回最可能的一个类别
+)
 
 @app.route("/")
 @app.route("/index")
@@ -108,8 +115,13 @@ def upload():
 
     form = UploadForm()
     if form.validate_on_submit():
-        post_title = request.form["post_title"]
+        print("✅ Form submitted")  # 调试
+        
+        post_title = form.post_title.data  # ✅ 用 FlaskForm 的方式拿数据
         news_content = form.news_content.data
+        # 新闻类别识别
+        result = news_category_classifier(news_content)
+        category_result = result[0][0]['label']
 
         # counting characters and sentences
         char_count = len(news_content)
@@ -130,13 +142,15 @@ def upload():
         db.session.commit()
 
         # Render the page, including emotion and sentiment analysis
+        
         return render_template("visualize.html",
                                content=news_content,
                                result=sentiment,
                                char_count=char_count,
                                sentence_count=sentence_count,
-                               emotion_scores=emotion_scores_sorted)
-
+                               emotion_scores=emotion_scores_sorted,
+                               news_category=category_result)
+    print("❌ Form not submitted or validation failed:", form.errors)
     return render_template("upload.html", form=form)
 
 
