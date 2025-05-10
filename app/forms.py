@@ -38,6 +38,7 @@ class RegistrationForm(FlaskForm):
         
 class UploadForm(FlaskForm):
     # Form for uploading news content for sentiment analysis
+    post_title = StringField('News Title', validators=[DataRequired()])
     news_content = TextAreaField('News Content', validators=[DataRequired()])
     submit = SubmitField('Upload and Analyze')
 
