@@ -42,12 +42,12 @@ sentiment_label_map = {
 # Need to extract the highest score from each output
 emotion_classifier = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base",top_k=None)
 
-# 新闻分类器
-# 使用公开模型，无需登录 token
+# News classifier
+# Using public model, no login token required
 news_category_classifier = pipeline(
     "text-classification",
     model="joeddav/distilbert-base-uncased-agnews-student",
-    top_k=1  # 只返回最可能的一个类别
+    # Only return the most likely category
 )
 
 @app.route("/")
@@ -115,11 +115,11 @@ def upload():
 
     form = UploadForm()
     if form.validate_on_submit():
-        print("✅ Form submitted")  # 调试
+        print("✅ Form submitted")  # debugging
         
-        post_title = form.post_title.data  # ✅ 用 FlaskForm 的方式拿数据
+        post_title = form.post_title.data  # ✅ Getting data using the FlaskForm method
         news_content = form.news_content.data
-        # 新闻类别识别
+        # News category classification
         result = news_category_classifier(news_content)
         category_result = result[0][0]['label']
 
