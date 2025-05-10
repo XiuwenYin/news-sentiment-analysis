@@ -119,9 +119,15 @@ def upload():
         
         post_title = form.post_title.data  # ✅ Getting data using the FlaskForm method
         news_content = form.news_content.data
+
         # News category classification
         result = news_category_classifier(news_content)
-        category_result = result[0][0]['label']
+        print("news_category_classifier result:", result)  # debug line
+
+        if result and isinstance(result[0], dict):
+            category_result = result[0]['label']
+        else:
+            category_result = 'unknown'
 
         # counting characters and sentences
         char_count = len(news_content)
@@ -300,12 +306,12 @@ def analysis():
     return render_template('analysis.html')
 
 # auto logout
-@app.route('/auto_logout', methods=['POST'])
-@csrf.exempt
-@login_required
-def auto_logout():
-    logout_user()
-    return '', 204
+# @app.route('/auto_logout', methods=['POST'])
+# @csrf.exempt
+# @login_required
+# def auto_logout():
+    # logout_user()
+    # return '', 204
 
 # News Sentiment Analysis Application Routes
 @app.route('/stats')
