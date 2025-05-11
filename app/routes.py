@@ -42,12 +42,11 @@ sentiment_label_map = {
 # Need to extract the highest score from each output
 emotion_classifier = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base",top_k=None)
 
-# News classifier
-# Using public model, no login token required
+# 新闻分类器
 news_category_classifier = pipeline(
     "text-classification",
     model="joeddav/distilbert-base-uncased-agnews-student",
-    # Only return the most likely category
+    top_k=1  # 只返回最可能的一个类别
 )
 
 @app.route("/")
@@ -70,6 +69,10 @@ def login():
             flash("Invalid username or password")
             return redirect(url_for("login"))
         login_user(user, remember=form.remember_me.data)
+        
+        if not user.profile_completed:
+            return redirect(url_for("complete_profile"))
+        
         next_page = request.args.get("next")
         if not next_page or urlsplit(next_page).netloc != "":
             next_page = url_for("index")
@@ -97,7 +100,12 @@ def register():
         return redirect(url_for("index"))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
+        user = User(username=form.username.data, 
+                    email=form.email.data,
+                    gender=form.gender.data,
+                    age=form.age.data,
+                    profile_completed=True  # 注册时直接设为已完成
+                    )
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -115,11 +123,9 @@ def upload():
 
     form = UploadForm()
     if form.validate_on_submit():
-        print("✅ Form submitted")  # debugging
-        
-        post_title = form.post_title.data  # ✅ Getting data using the FlaskForm method
+        post_title = form.post_title.data  # ✅ 用 FlaskForm 的方式拿数据
         news_content = form.news_content.data
-        # News category classification
+        # 新闻类别识别
         result = news_category_classifier(news_content)
         category_result = result[0][0]['label']
 
@@ -150,7 +156,6 @@ def upload():
                                sentence_count=sentence_count,
                                emotion_scores=emotion_scores_sorted,
                                news_category=category_result)
-    print("❌ Form not submitted or validation failed:", form.errors)
     return render_template("upload.html", form=form)
 
 
@@ -249,19 +254,49 @@ def post_detail(post_id):
 @app.route('/user/<username>')
 @login_required
 def user(username):
-    user = db.first_or_404(sa.select(User).where(User.username == username))
-    posts = db.session.execute(
-        sa.select(Post).where(Post.user_id == user.id).order_by(Post.timestamp.desc())
-        ).scalars().all()
-    
-    # Calculate label counts
-    label_counts = {
+      seven_days_ago = datetime.utcnow() - timedelta(days=7)
+      posts = Post.query.filter(
+        Post.user_id == current_user.id,
+        Post.timestamp >= seven_days_ago
+    ).all()
+      
+      label_counts = {
         'Negative': sum(1 for post in posts if post.sentiment == 'Negative'),
         'Neutral': sum(1 for post in posts if post.sentiment == 'Neutral'),
         'Positive': sum(1 for post in posts if post.sentiment == 'Positive')
     }
 
-    return render_template('user.html', user=user, posts=posts, label_counts=label_counts)
+    # 加入统计图所需数据
+      daily_sentiment = {}
+      sentiment_counter = Counter()
+      daily_post_count = Counter()
+
+      for post in posts:
+        date_str = post.timestamp.strftime('%Y-%m-%d')
+        daily_post_count[date_str] += 1
+        sentiment_counter[post.sentiment] += 1
+        if date_str not in daily_sentiment:
+            daily_sentiment[date_str] = Counter()
+        daily_sentiment[date_str][post.sentiment] += 1
+
+      dates = sorted(daily_sentiment.keys())
+      positive = [daily_sentiment[d].get('Positive', 0) for d in dates]
+      neutral = [daily_sentiment[d].get('Neutral', 0) for d in dates]
+      negative = [daily_sentiment[d].get('Negative', 0) for d in dates]
+      post_counts = [daily_post_count[d] for d in dates]
+
+      return render_template('user.html',
+                           user=user,
+                           posts=posts,
+                           label_counts=label_counts,
+                           dates=dates or [],
+                           positive=positive or [],
+                           neutral=neutral or [],
+                           negative=negative or [],
+                           post_counts=post_counts or [],
+                            sentiment_counter = sentiment_counter
+                           )
+
 
 
 @app.route('/post/<int:post_id>')
@@ -345,3 +380,26 @@ def stats():
                            negative=negative,
                            sentiment_counter=sentiment_counter,
                            post_counts=post_counts)
+
+
+@app.route('/complete_profile', methods=['GET', 'POST'])
+@login_required
+def complete_profile():
+    form = ProfileForm()
+    if form.validate_on_submit():
+        current_user.full_name = form.full_name.data
+        current_user.age = form.age.data
+        current_user.gender = form.gender.data
+
+        if form.avatar.data:
+            avatar_filename = secure_filename(form.avatar.data.filename)
+            avatar_path = os.path.join('static/avatars', avatar_filename)
+            form.avatar.data.save(avatar_path)
+            current_user.avatar = avatar_filename
+
+        current_user.profile_completed = True
+        db.session.commit()
+        flash("Profile completed successfully!", "success")
+        return redirect(url_for('index'))
+
+    return render_template('complete_profile.html', form=form)

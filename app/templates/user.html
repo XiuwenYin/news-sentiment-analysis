@@ -1,64 +1,108 @@
 {% extends "base.html" %}
 
-{% block content %}
-<div class="container mt-4">
-    <h1 class="mb-4">Posts by {{ user.username }}</h1>
-    <hr>
+{% block title %}User Profile{% endblock %}
 
-    <!-- Bar Chart -->
-    <div class="mb-4 text-center">
-        <div style="max-width: 600px; margin: 0 auto;">
-            <canvas id="sentimentChart"></canvas>
+{% block content %}
+<section class="container-left">
+    <!-- 左侧导航栏 -->
+    <div class="sidebar">
+        <div class="list-group">
+            <a href="#trend" class="nav-link">Sentiment Trend</a>
+            <a href="#distribution" class="nav-link">Sentiment Overview</a>
+            <a href="#activity" class="nav-link">Post Activity</a>
         </div>
     </div>
 
-    <div class="list-group">
-        {% for post in posts %}
-        <a href="{{ url_for('post', post_id=post.id) }}" class="list-group-item list-group-item-action">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ post.title }}</h5>
-                <small class="text-muted">{{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+    <!-- 右侧图表内容 -->
+    <div class="content">
+        <h2 class="mb-4 text-center">📊 User Statistics</h2>
+
+        <!-- Sentiment Trend Chart Card -->
+        <div class="card shadow-sm rounded mb-4">
+            <div class="card-body">
+                <h5 class="card-title text-center">Sentiment Trend (Last 7 Days)</h5>
+                <canvas id="trendChart" style="max-height: 300px;"></canvas>
             </div>
-        </a>
-        {% endfor %}
-    </div>
-</div>
+        </div>
+
+        <!-- Overall Sentiment Distribution Chart Card -->
+        <div class="card shadow-sm rounded mb-4">
+            <div class="card-body">
+                <h5 class="card-title text-center">Overall Sentiment Distribution</h5>
+                <canvas id="distributionChart" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+
+        <!-- Daily Activity Bar Chart Card -->
+        <div class="card shadow-sm rounded mb-4">
+            <div class="card-body">
+                <h5 class="card-title text-center">Daily Post Activity</h5>
+                <canvas id="activityChart" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+
+</section>
 {% endblock %}
 
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Data for the chart
-    const labelCounts = {
-        Negative: {{ label_counts['Negative'] }},
-        Neutral: {{ label_counts['Neutral'] }},
-        Positive: {{ label_counts['Positive'] }}
-    };
+    const dates = {{ dates| tojson }};
+    const positive = {{ positive| tojson }};
+    const neutral = {{ neutral| tojson }};
+    const negative = {{ negative| tojson }};
+    const postCounts = {{ post_counts| tojson }};
+    const sentimentCounter = {{ sentiment_counter| tojson }};
 
-    // Render the chart
-    const ctx = document.getElementById('sentimentChart').getContext('2d');
-    new Chart(ctx, {
+    // 折线图
+    new Chart(document.getElementById('trendChart'), {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [
+                { label: 'Positive', data: positive, borderColor: 'green' },
+                { label: 'Neutral', data: neutral, borderColor: 'gray' },
+                { label: 'Negative', data: negative, borderColor: 'red' }
+            ],
+            options: {
+                responsive: true,
+                maintainAspectRatio: false // 禁止固定比例，才能真正拉伸
+            }
+        }
+    });
+
+    // 饼图
+    new Chart(document.getElementById('distributionChart'), {
+        type: 'pie',
+        data: {
+            labels: Object.keys(sentimentCounter),
+            datasets: [{
+                data: Object.values(sentimentCounter),
+                backgroundColor: ['green', 'gray', 'red']
+            }],
+            options: {
+                responsive: true,
+                maintainAspectRatio: false // 禁止固定比例，才能真正拉伸
+            }
+        }
+    });
+
+    // 柱状图
+    new Chart(document.getElementById('activityChart'), {
         type: 'bar',
         data: {
-            labels: ['Negative', 'Neutral', 'Positive'],
+            labels: dates,
             datasets: [{
-                label: 'Sentiment Counts',
-                data: [labelCounts.Negative, labelCounts.Neutral, labelCounts.Positive],
-                backgroundColor: ['#dc3545', '#6c757d', '#28a745'], // Colors for Negative, Neutral, Positive
-                borderColor: ['#dc3545', '#6c757d', '#28a745'],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true, // Maintain aspect ratio
-            aspectRatio: 2, // Set aspect ratio (width/height)
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
+                label: 'Posts per Day',
+                data: postCounts,
+                backgroundColor: 'skyblue'
+            }],
+            options: {
+                responsive: true,
+                maintainAspectRatio: false // 禁止固定比例，才能真正拉伸
             }
         }
     });
 </script>
+
 {% endblock %}
