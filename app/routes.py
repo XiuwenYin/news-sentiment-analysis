@@ -5,7 +5,7 @@ from app.models import User, Post, db, post_shares
 from flask import render_template, flash, redirect, url_for, request
 
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, SharePostForm, UploadForm
+from app.forms import LoginForm, RegistrationForm, SharePostForm, UploadForm, FilterForm
 from urllib.parse import urlsplit
 from transformers import pipeline
 
@@ -69,10 +69,6 @@ def login():
             flash("Invalid username or password")
             return redirect(url_for("login"))
         login_user(user, remember=form.remember_me.data)
-        
-        if not user.profile_completed:
-            return redirect(url_for("complete_profile"))
-        
         next_page = request.args.get("next")
         if not next_page or urlsplit(next_page).netloc != "":
             next_page = url_for("index")
@@ -100,12 +96,7 @@ def register():
         return redirect(url_for("index"))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, 
-                    email=form.email.data,
-                    gender=form.gender.data,
-                    age=form.age.data,
-                    profile_completed=True  # 注册时直接设为已完成
-                    )
+        user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -144,6 +135,7 @@ def upload():
         # Save to database
         post = Post(title=post_title, body=news_content, author=current_user)
         post.sentiment = sentiment
+        post.category = category_result 
         db.session.add(post)
         db.session.commit()
 
@@ -251,27 +243,74 @@ def post_detail(post_id):
                            char_count=char_count, sentence_count=sentence_count)
 
 
-@app.route('/user/<username>')
+@app.route('/user/<username>', methods=["GET", "POST"])
 @login_required
 def user(username):
-      seven_days_ago = datetime.utcnow() - timedelta(days=7)
-      posts = Post.query.filter(
+    user = db.first_or_404(sa.select(User).where(User.username == username))
+    form = FilterForm()
+    age_group = None
+    gender_filter = None
+    category_distribution = {}
+
+    # ✅ 保存一次年龄和性别（只在POST提交中且之前为空时）
+    if request.method == "POST":
+        submitted_age = request.form.get("age")
+        submitted_gender = request.form.get("gender")
+
+        if submitted_age and not user.age:
+            user.age = int(submitted_age)
+        if submitted_gender and not user.gender:
+            user.gender = submitted_gender
+
+        db.session.commit()
+
+        # ✅ 获取筛选项
+        gender_filter = request.form.get("gender_filter")
+        age_group = request.form.get("age_group")
+
+        # ✅ 筛选：按性别
+        if gender_filter:
+            result = db.session.execute(
+                sa.select(Post.category, func.count(Post.id))
+                .join(User)
+                .where(User.gender == gender_filter)
+                .group_by(Post.category)
+            )
+            category_distribution = dict(result.all())
+
+        # ✅ 筛选：按年龄段
+        elif age_group:
+            try:
+                min_age, max_age = map(int, age_group.split('-'))
+                result = db.session.execute(
+                    sa.select(Post.category, func.count(Post.id))
+                    .join(User)
+                    .where(User.age.between(min_age, max_age))
+                    .group_by(Post.category)
+                )
+                category_distribution = dict(result.all())
+            except ValueError:
+                flash("Invalid age group format", "danger")
+
+    # ✅ 统计最近7天的帖子
+    seven_days_ago = datetime.utcnow() - timedelta(days=7)
+    posts = Post.query.filter(
         Post.user_id == current_user.id,
         Post.timestamp >= seven_days_ago
     ).all()
-      
-      label_counts = {
+
+    label_counts = {
         'Negative': sum(1 for post in posts if post.sentiment == 'Negative'),
         'Neutral': sum(1 for post in posts if post.sentiment == 'Neutral'),
         'Positive': sum(1 for post in posts if post.sentiment == 'Positive')
     }
 
-    # 加入统计图所需数据
-      daily_sentiment = {}
-      sentiment_counter = Counter()
-      daily_post_count = Counter()
+    # ✅ 准备图表数据
+    daily_sentiment = {}
+    sentiment_counter = Counter()
+    daily_post_count = Counter()
 
-      for post in posts:
+    for post in posts:
         date_str = post.timestamp.strftime('%Y-%m-%d')
         daily_post_count[date_str] += 1
         sentiment_counter[post.sentiment] += 1
@@ -279,23 +318,32 @@ def user(username):
             daily_sentiment[date_str] = Counter()
         daily_sentiment[date_str][post.sentiment] += 1
 
-      dates = sorted(daily_sentiment.keys())
-      positive = [daily_sentiment[d].get('Positive', 0) for d in dates]
-      neutral = [daily_sentiment[d].get('Neutral', 0) for d in dates]
-      negative = [daily_sentiment[d].get('Negative', 0) for d in dates]
-      post_counts = [daily_post_count[d] for d in dates]
+    dates = sorted(daily_sentiment.keys())
+    positive = [daily_sentiment[d].get('Positive', 0) for d in dates]
+    neutral = [daily_sentiment[d].get('Neutral', 0) for d in dates]
+    negative = [daily_sentiment[d].get('Negative', 0) for d in dates]
+    post_counts = [daily_post_count[d] for d in dates]
 
-      return render_template('user.html',
-                           user=user,
-                           posts=posts,
-                           label_counts=label_counts,
-                           dates=dates or [],
-                           positive=positive or [],
-                           neutral=neutral or [],
-                           negative=negative or [],
-                           post_counts=post_counts or [],
-                            sentiment_counter = sentiment_counter
-                           )
+    # ✅ 渲染模板
+    return render_template('user.html',
+        user=user,
+        form=form,
+        posts=posts,
+        age_group=age_group,
+        gender_filter=gender_filter,
+        label_counts=label_counts,
+        dates=dates or [],
+        positive=positive or [],
+        neutral=neutral or [],
+        negative=negative or [],
+        post_counts=post_counts or [],
+        sentiment_counter=sentiment_counter,
+        category_distribution=category_distribution or {},
+        category_labels=list(category_distribution.keys()) if category_distribution else [],
+        category_values=list(category_distribution.values()) if category_distribution else []
+    )
+
+                           
 
 
 
@@ -382,24 +430,3 @@ def stats():
                            post_counts=post_counts)
 
 
-@app.route('/complete_profile', methods=['GET', 'POST'])
-@login_required
-def complete_profile():
-    form = ProfileForm()
-    if form.validate_on_submit():
-        current_user.full_name = form.full_name.data
-        current_user.age = form.age.data
-        current_user.gender = form.gender.data
-
-        if form.avatar.data:
-            avatar_filename = secure_filename(form.avatar.data.filename)
-            avatar_path = os.path.join('static/avatars', avatar_filename)
-            form.avatar.data.save(avatar_path)
-            current_user.avatar = avatar_filename
-
-        current_user.profile_completed = True
-        db.session.commit()
-        flash("Profile completed successfully!", "success")
-        return redirect(url_for('index'))
-
-    return render_template('complete_profile.html', form=form)
