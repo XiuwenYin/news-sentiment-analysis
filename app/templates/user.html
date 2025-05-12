@@ -15,6 +15,19 @@
 
     <!-- 右侧图表内容 -->
     <div class="content">
+        <!-- 引导介绍 -->
+        <div id="top-feature" class="alert alert-light border rounded p-4 mb-4 shadow-sm">
+            <h5><strong>Curious about what people your age or gender are interested in? 🧐</strong>
+            </h5>
+            <p>
+                With our smart filtering feature, you can explore the most popular news categories among different age
+                groups and genders in just one click! 🔍
+                Discover trending topics, find common interests, or spark new curiosity. Whether you're tracking the
+                latest buzz 🌐 or looking for more personalized content 🎯,
+                this feature gives you valuable insights to make your reading more focused and fun.
+            </p>
+            <p><strong>Try it now and uncover your unique news world! 💥🗞️</strong></p>
+        </div>
         <!-- 年龄和性别 -->
         <!-- 当前用户信息 -->
         <form method="POST" class="mb-4">
@@ -83,7 +96,25 @@
         </div>
         {% endif %}
 
-        <h2 class="mb-4 text-center">📊 User Statistics</h2>
+        <h2 id="statistics-section" class="mb-4 text-center">📊 User Statistics</h2>
+        <!-- 引导介绍 -->
+        <div class="alert alert-light border rounded p-4 mb-4 shadow-sm">
+            <h5><strong>Your Mood, Your Moments — Visualized 💬</strong></h5>
+            <p>
+                📈 <strong>Sentiment Trend</strong><br>
+                Track how your own emotions shift over time based on your posts. See patterns in your mood and emotional
+                expression.<br><br>
+
+                📊 <strong>Overall Sentiment Distribution</strong><br>
+                Understand the emotional breakdown of your content — are your posts mostly positive, neutral, or
+                negative?<br><br>
+
+                📅 <strong>Daily Post Activity</strong><br>
+                Discover your personal posting habits. Find out which days you're most active and how your engagement
+                varies over time.
+            </p>
+            <p><strong>Come and click! <a href="#top-feature">See Your Emotional Footprint 🔍</a></strong></p>
+        </div>
         <!-- Sentiment Trend Chart Card -->
         <div id="trend-section" class="chart-section card shadow-sm rounded mb-4">
             <div class="card-body">
@@ -203,9 +234,23 @@
     });
 
     function showSection(sectionId) {
-        document.querySelectorAll('.chart-section').forEach(section => {
-            section.style.display = (section.id === sectionId) ? 'block' : 'none';
-        });
+        // 隐藏所有图表部分
+        const sections = document.querySelectorAll(".chart-section");
+        sections.forEach(sec => sec.style.display = "none");
+
+        // 显示目标图表部分
+        const target = document.getElementById(sectionId);
+        if (target) {
+            target.style.display = "block";
+        }
+
+        // 只有非 category-section 时才滚动到 User Statistics 区域
+        if (sectionId !== 'category-section') {
+            const statsHeader = document.getElementById("statistics-section");
+            if (statsHeader) {
+                statsHeader.scrollIntoView({ behavior: "smooth" });
+            }
+        }
     }
 </script>
 
