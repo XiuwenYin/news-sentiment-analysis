@@ -5,7 +5,7 @@ from app.models import User, Post, db, post_shares
 from flask import render_template, flash, redirect, url_for, request
 
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, SharePostForm, UploadForm
+from app.forms import LoginForm, RegistrationForm, SharePostForm, UploadForm, FilterForm
 from urllib.parse import urlsplit
 from transformers import pipeline
 
@@ -42,12 +42,11 @@ sentiment_label_map = {
 # Need to extract the highest score from each output
 emotion_classifier = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base",top_k=None)
 
-# News classifier
-# Using public model, no login token required
+# 新闻分类器
 news_category_classifier = pipeline(
     "text-classification",
     model="joeddav/distilbert-base-uncased-agnews-student",
-    # Only return the most likely category
+    top_k=1  # 只返回最可能的一个类别
 )
 
 @app.route("/")
@@ -115,15 +114,19 @@ def upload():
 
     form = UploadForm()
     if form.validate_on_submit():
-        print("✅ Form submitted")  # debugging
-        
-        post_title = form.post_title.data  # ✅ Getting data using the FlaskForm method
+        post_title = form.post_title.data  # ✅ 用 FlaskForm 的方式拿数据
         news_content = form.news_content.data
+<<<<<<< HEAD
+        # 新闻类别识别
+        result = news_category_classifier(news_content)
+        category_result = result[0][0]['label']
+=======
         # News category classification
         # result = news_category_classifier(news_content)
         result = news_category_classifier(news_content, truncation=True, max_length=512)
         # category_result = result[0][0]['label']
         category_result = result[0]['label']
+>>>>>>> main
 
         # counting characters and sentences
         char_count = len(news_content)
@@ -142,6 +145,7 @@ def upload():
         # Save to database
         post = Post(title=post_title, body=news_content, author=current_user)
         post.sentiment = sentiment
+        post.category = category_result 
         db.session.add(post)
         db.session.commit()
 
@@ -154,7 +158,6 @@ def upload():
                                sentence_count=sentence_count,
                                emotion_scores=emotion_scores_sorted,
                                news_category=category_result)
-    print("❌ Form not submitted or validation failed:", form.errors)
     return render_template("upload.html", form=form)
 
 
@@ -250,22 +253,108 @@ def post_detail(post_id):
                            char_count=char_count, sentence_count=sentence_count)
 
 
-@app.route('/user/<username>')
+@app.route('/user/<username>', methods=["GET", "POST"])
 @login_required
 def user(username):
     user = db.first_or_404(sa.select(User).where(User.username == username))
-    posts = db.session.execute(
-        sa.select(Post).where(Post.user_id == user.id).order_by(Post.timestamp.desc())
-        ).scalars().all()
-    
-    # Calculate label counts
+    form = FilterForm()
+    age_group = None
+    gender_filter = None
+    category_distribution = {}
+
+    # ✅ 保存一次年龄和性别（只在POST提交中且之前为空时）
+    if request.method == "POST":
+        submitted_age = request.form.get("age")
+        submitted_gender = request.form.get("gender")
+
+        if submitted_age and not user.age:
+            user.age = int(submitted_age)
+        if submitted_gender and not user.gender:
+            user.gender = submitted_gender
+
+        db.session.commit()
+
+        # ✅ 获取筛选项
+        gender_filter = request.form.get("gender_filter")
+        age_group = request.form.get("age_group")
+
+        # ✅ 筛选：按性别
+        if gender_filter:
+            result = db.session.execute(
+                sa.select(Post.category, func.count(Post.id))
+                .join(User)
+                .where(User.gender == gender_filter)
+                .group_by(Post.category)
+            )
+            category_distribution = dict(result.all())
+
+        # ✅ 筛选：按年龄段
+        elif age_group:
+            try:
+                min_age, max_age = map(int, age_group.split('-'))
+                result = db.session.execute(
+                    sa.select(Post.category, func.count(Post.id))
+                    .join(User)
+                    .where(User.age.between(min_age, max_age))
+                    .group_by(Post.category)
+                )
+                category_distribution = dict(result.all())
+            except ValueError:
+                flash("Invalid age group format", "danger")
+
+    # ✅ 统计最近7天的帖子
+    seven_days_ago = datetime.utcnow() - timedelta(days=7)
+    posts = Post.query.filter(
+        Post.user_id == current_user.id,
+        Post.timestamp >= seven_days_ago
+    ).all()
+
     label_counts = {
         'Negative': sum(1 for post in posts if post.sentiment == 'Negative'),
         'Neutral': sum(1 for post in posts if post.sentiment == 'Neutral'),
         'Positive': sum(1 for post in posts if post.sentiment == 'Positive')
     }
 
-    return render_template('user.html', user=user, posts=posts, label_counts=label_counts)
+    # ✅ 准备图表数据
+    daily_sentiment = {}
+    sentiment_counter = Counter()
+    daily_post_count = Counter()
+
+    for post in posts:
+        date_str = post.timestamp.strftime('%Y-%m-%d')
+        daily_post_count[date_str] += 1
+        sentiment_counter[post.sentiment] += 1
+        if date_str not in daily_sentiment:
+            daily_sentiment[date_str] = Counter()
+        daily_sentiment[date_str][post.sentiment] += 1
+
+    dates = sorted(daily_sentiment.keys())
+    positive = [daily_sentiment[d].get('Positive', 0) for d in dates]
+    neutral = [daily_sentiment[d].get('Neutral', 0) for d in dates]
+    negative = [daily_sentiment[d].get('Negative', 0) for d in dates]
+    post_counts = [daily_post_count[d] for d in dates]
+
+    # ✅ 渲染模板
+    return render_template('user.html',
+        user=user,
+        form=form,
+        posts=posts,
+        age_group=age_group,
+        gender_filter=gender_filter,
+        label_counts=label_counts,
+        dates=dates or [],
+        positive=positive or [],
+        neutral=neutral or [],
+        negative=negative or [],
+        post_counts=post_counts or [],
+        sentiment_counter=sentiment_counter,
+        category_distribution=category_distribution or {},
+        category_labels=list(category_distribution.keys()) if category_distribution else [],
+        category_values=list(category_distribution.values()) if category_distribution else []
+    )
+
+                           
+
 
 
 @app.route('/post/<int:post_id>')
@@ -349,3 +438,5 @@ def stats():
                            negative=negative,
                            sentiment_counter=sentiment_counter,
                            post_counts=post_counts)
+
+

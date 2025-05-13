@@ -22,6 +22,10 @@ class User(UserMixin, db.Model):
     email: so.Mapped[str] = so.mapped_column(sa.String(120), index=True, 
                                              unique=True)
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
+    
+    age = db.Column(db.Integer, nullable=True)
+    gender = db.Column(db.String(10), nullable=True)
+    profile_completed: so.Mapped[bool] = so.mapped_column(sa.Boolean, default=False, nullable=False)
 
     posts: so.WriteOnlyMapped['Post'] = so.relationship(
         back_populates='author')
@@ -62,6 +66,8 @@ class Post(db.Model):
     sentiment: so.Mapped[str] = so.mapped_column(sa.String(64), nullable=True)
     #label: so.Mapped[str] = so.mapped_column(sa.String(64), nullable=True)
     author: so.Mapped[User] = so.relationship(back_populates='posts')
+    #新闻类别
+    category: so.Mapped[Optional[str]] = so.mapped_column(sa.String(64), nullable=True)
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
