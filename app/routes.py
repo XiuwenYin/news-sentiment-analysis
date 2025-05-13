@@ -120,19 +120,23 @@ def upload():
         post_title = form.post_title.data  # ✅ Getting data using the FlaskForm method
         news_content = form.news_content.data
         # News category classification
-        result = news_category_classifier(news_content)
-        category_result = result[0][0]['label']
+        # result = news_category_classifier(news_content)
+        result = news_category_classifier(news_content, truncation=True, max_length=512)
+        # category_result = result[0][0]['label']
+        category_result = result[0]['label']
 
         # counting characters and sentences
         char_count = len(news_content)
         sentence_count = len([s for s in re.split(r'[.!?]', news_content) if s.strip()])
 
          # sentiment analysis
-        emotion_scores = emotion_classifier(news_content)[0]
+        # emotion_scores = emotion_classifier(news_content)[0]
+        emotion_scores = emotion_classifier(news_content, truncation=True, max_length=512)[0]
         emotion_scores_sorted = sorted(emotion_scores, key=lambda x: x['score'], reverse=True)
 
         # Sentiment analysis (positive/neutral/negative)
-        sentiment_output = sentiment_classifier(news_content)
+        # sentiment_output = sentiment_classifier(news_content)
+        sentiment_output = sentiment_classifier(news_content, truncation=True, max_length=512)
         sentiment = sentiment_label_map[sentiment_output[0]["label"]]
 
         # Save to database
