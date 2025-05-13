@@ -11,6 +11,15 @@
         /* Prevent main content from sliding under the fixed navbar */
         body {
             padding-top: 70px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .container.mt-4 {
+            flex: 1 0 auto;
+        }
+        footer {
+            flex-shrink: 0;
         }
     </style>
 </head>

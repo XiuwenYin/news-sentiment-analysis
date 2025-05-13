@@ -3,7 +3,7 @@
 {% block title %}Upload News Content{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-5 mb-5">
   <h2 class="text-center mb-4">Upload the news content to analyze the sentiment</h2>
 
   <form method="POST" action="{{ url_for('upload') }}">
@@ -21,4 +21,5 @@
       {{ form.submit(class_="btn btn-primary") }}
     </div>
   </form>
+</div>
 {% endblock %}
