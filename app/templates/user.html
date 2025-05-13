@@ -1,64 +1,257 @@
 {% extends "base.html" %}
 
+{% block title %}User Profile{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
-    <h1 class="mb-4">Posts by {{ user.username }}</h1>
-    <hr>
+<section class="container-left">
+    <!-- 左侧导航栏 -->
+    <div class="sidebar">
+        <a href="javascript:void(0);" class="nav-link" onclick="showSection('category-section')">Finding</a>
+        <a href="javascript:void(0);" class="nav-link" onclick="showSection('trend-section')">Sentiment Trend</a>
+        <a href="javascript:void(0);" class="nav-link" onclick="showSection('distribution-section')">Overall Sentiment
+            Distribution</a>
+        <a href="javascript:void(0);" class="nav-link" onclick="showSection('activity-section')">Daily Post Activity</a>
+    </div>
 
-    <!-- Bar Chart -->
-    <div class="mb-4 text-center">
-        <div style="max-width: 600px; margin: 0 auto;">
-            <canvas id="sentimentChart"></canvas>
+    <!-- 右侧图表内容 -->
+    <div class="content">
+        <!-- 引导介绍 -->
+        <div id="top-feature" class="alert alert-light border rounded p-4 mb-4 shadow-sm">
+            <h5><strong>Curious about what people your age or gender are interested in? 🧐</strong>
+            </h5>
+            <p>
+                With our smart filtering feature, you can explore the most popular news categories among different age
+                groups and genders in just one click! 🔍
+                Discover trending topics, find common interests, or spark new curiosity. Whether you're tracking the
+                latest buzz 🌐 or looking for more personalized content 🎯,
+                this feature gives you valuable insights to make your reading more focused and fun.
+            </p>
+            <p><strong>Try it now and uncover your unique news world! 💥🗞️</strong></p>
         </div>
-    </div>
+        <!-- 年龄和性别 -->
+        <!-- 当前用户信息 -->
+        <form method="POST" class="mb-4">
+            {{ form.hidden_tag() }}
+            <div class="row">
+                <!-- 一次性保存的年龄 -->
+                <div class="col-md-3">
+                    <label>Age</label>
+                    <input name="age" type="number" class="form-control" value="{{ user.age or '' }}">
+                </div>
 
-    <div class="list-group">
-        {% for post in posts %}
-        <a href="{{ url_for('post', post_id=post.id) }}" class="list-group-item list-group-item-action">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ post.title }}</h5>
-                <small class="text-muted">{{ post.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+                <!-- 一次性保存的性别 -->
+                <div class="col-md-3">
+                    <label>Gender</label>
+                    <select name="gender" class="form-control">
+                        <option value="">Select</option>
+                        <option value="Male" {% if user.gender=='Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if user.gender=='Female' %}selected{% endif %}>Female</option>
+                        <option value="Other" {% if user.gender=='Other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+
+                <!-- 用于筛选：按性别 -->
+                <div class="col-md-3">
+                    <label>Filter by Gender</label>
+                    <select name="gender_filter" class="form-control">
+                        <option value="">None</option>
+                        <option value="Male" {% if gender_filter=='Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if gender_filter=='Female' %}selected{% endif %}>Female</option>
+                        <option value="Other" {% if gender_filter=='Other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+
+                <!-- 用于筛选：按年龄段 -->
+                <div class="col-md-3">
+                    <label>Filter by Age Group</label>
+                    <select name="age_group" class="form-control">
+                        <option value="">None</option>
+                        <option value="20-30" {% if age_group=='20-30' %}selected{% endif %}>20–30</option>
+                        <option value="30-40" {% if age_group=='30-40' %}selected{% endif %}>30–40</option>
+                        <option value="40-50" {% if age_group=='40-50' %}selected{% endif %}>40–50</option>
+                        <option value="50-60" {% if age_group=='50-60' %}selected{% endif %}>50–60</option>
+                        <option value="60-70" {% if age_group=='60-70' %}selected{% endif %}>60–70</option>
+                    </select>
+                </div>
             </div>
-        </a>
-        {% endfor %}
-    </div>
-</div>
+
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary">Apply Filters</button>
+            </div>
+        </form>
+
+        {% if gender_filter %}
+        <h5>News Category Distribution for Gender: {{ gender_filter }}</h5>
+        {% elif age_group %}
+        <h5>News Category Distribution for Age Group: {{ age_group }}</h5>
+        {% endif %}
+
+        {% if category_distribution %}
+        <!-- Category Distribution Chart Card -->
+        <div id="category-section" class="chart-section card shadow-sm rounded mb-4">
+            <div class="card-body">
+                <h5 class="card-title text-center">Category Distribution (Bar Chart)</h5>
+                <canvas id="categoryChart" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+        {% endif %}
+
+        <h2 id="statistics-section" class="mb-4 text-center">📊 User Statistics</h2>
+        <!-- 引导介绍 -->
+        <div class="alert alert-light border rounded p-4 mb-4 shadow-sm">
+            <h5><strong>Your Mood, Your Moments — Visualized 💬</strong></h5>
+            <p>
+                📈 <strong>Sentiment Trend</strong><br>
+                Track how your own emotions shift over time based on your posts. See patterns in your mood and emotional
+                expression.<br><br>
+
+                📊 <strong>Overall Sentiment Distribution</strong><br>
+                Understand the emotional breakdown of your content — are your posts mostly positive, neutral, or
+                negative?<br><br>
+
+                📅 <strong>Daily Post Activity</strong><br>
+                Discover your personal posting habits. Find out which days you're most active and how your engagement
+                varies over time.
+            </p>
+            <p><strong>Come and click! <a href="#top-feature">See Your Emotional Footprint 🔍</a></strong></p>
+        </div>
+        <!-- Sentiment Trend Chart Card -->
+        <div id="trend-section" class="chart-section card shadow-sm rounded mb-4">
+            <div class="card-body">
+                <h5 class="card-title text-center">Sentiment Trend (Last 7 Days)</h5>
+                <canvas id="trendChart" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+
+        <!-- Overall Sentiment Distribution Chart Card -->
+        <div id="distribution-section" class="chart-section card shadow-sm rounded mb-4">
+            <div class="card-body">
+                <h5 class="card-title text-center">Overall Sentiment Distribution</h5>
+                <canvas id="distributionChart" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+
+        <!-- Daily Activity Bar Chart Card -->
+        <div id="activity-section" class="chart-section card shadow-sm rounded mb-4">
+            <div class="card-body">
+                <h5 class="card-title text-center">Daily Post Activity</h5>
+                <canvas id="activityChart" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+
+</section>
 {% endblock %}
 
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Data for the chart
-    const labelCounts = {
-        Negative: {{ label_counts['Negative'] }},
-        Neutral: {{ label_counts['Neutral'] }},
-        Positive: {{ label_counts['Positive'] }}
-    };
+    const dates = {{ dates| tojson }};
+    const positive = {{ positive| tojson }};
+    const neutral = {{ neutral| tojson }};
+    const negative = {{ negative| tojson }};
+    const postCounts = {{ post_counts| tojson }};
+    const sentimentCounter = {{ sentiment_counter| tojson }};
+    const categoryLabels = {{ category_labels| tojson }};
+    const categoryValues = {{ category_values| tojson }};
 
-    // Render the chart
-    const ctx = document.getElementById('sentimentChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
+    // 折线图
+    new Chart(document.getElementById("categoryChart"), {
+        type: "bar",
         data: {
-            labels: ['Negative', 'Neutral', 'Positive'],
+            labels: categoryLabels,
             datasets: [{
-                label: 'Sentiment Counts',
-                data: [labelCounts.Negative, labelCounts.Neutral, labelCounts.Positive],
-                backgroundColor: ['#dc3545', '#6c757d', '#28a745'], // Colors for Negative, Neutral, Positive
-                borderColor: ['#dc3545', '#6c757d', '#28a745'],
-                borderWidth: 1
+                label: "News Category Count",
+                data: categoryValues,
+                backgroundColor: "rgba(54, 162, 235, 0.6)"
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true, // Maintain aspect ratio
-            aspectRatio: 2, // Set aspect ratio (width/height)
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
+            maintainAspectRatio: false
+        }
+    });
+
+    // 折线图
+    new Chart(document.getElementById('trendChart'), {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [
+                { label: 'Positive', data: positive, borderColor: 'green' },
+                { label: 'Neutral', data: neutral, borderColor: 'gray' },
+                { label: 'Negative', data: negative, borderColor: 'red' }
+            ],
+            options: {
+                responsive: true,
+                maintainAspectRatio: false // 禁止固定比例，才能真正拉伸
             }
         }
     });
+
+    // 饼图
+    new Chart(document.getElementById('distributionChart'), {
+        type: 'pie',
+        data: {
+            labels: Object.keys(sentimentCounter),
+            datasets: [{
+                data: Object.values(sentimentCounter),
+                backgroundColor: ['green', 'gray', 'red']
+            }],
+            options: {
+                responsive: true,
+                maintainAspectRatio: false // 禁止固定比例，才能真正拉伸
+            }
+        }
+    });
+
+    // 柱状图
+    new Chart(document.getElementById('activityChart'), {
+        type: 'bar',
+        data: {
+            labels: dates,
+            datasets: [{
+                label: 'Posts per Day',
+                data: postCounts,
+                backgroundColor: 'skyblue'
+            }],
+            options: {
+                responsive: true,
+                maintainAspectRatio: false // 禁止固定比例，才能真正拉伸
+            }
+        }
+    });
+
+    // 显示某个图表区域，隐藏其他区域
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.chart-section').forEach(section => {
+            section.style.display = 'none';
+        });
+
+        // 如果后端返回分类图表有数据，则显示 category-section
+        {% if category_distribution %}
+        document.getElementById('category-section').style.display = 'block';
+        {% endif %}
+    });
+
+    function showSection(sectionId) {
+        // 隐藏所有图表部分
+        const sections = document.querySelectorAll(".chart-section");
+        sections.forEach(sec => sec.style.display = "none");
+
+        // 显示目标图表部分
+        const target = document.getElementById(sectionId);
+        if (target) {
+            target.style.display = "block";
+        }
+
+        // 只有非 category-section 时才滚动到 User Statistics 区域
+        if (sectionId !== 'category-section') {
+            const statsHeader = document.getElementById("statistics-section");
+            if (statsHeader) {
+                statsHeader.scrollIntoView({ behavior: "smooth" });
+            }
+        }
+    }
 </script>
+
 {% endblock %}

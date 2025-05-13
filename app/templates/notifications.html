@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Your Notifications</h2>
+    <ul class="list-group">
+        {% for notif in notifications %}
+        <li class="list-group-item{% if not notif.is_read %} list-group-item-info{% endif %}">
+            {{ notif.message }} <span class="text-muted float-end">{{ notif.timestamp.strftime('%Y-%m-%d %H:%M') }}</span>
+        </li>
+        {% else %}
+        <li class="list-group-item">No notifications.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

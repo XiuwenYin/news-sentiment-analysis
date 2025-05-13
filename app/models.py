@@ -22,6 +22,10 @@ class User(UserMixin, db.Model):
     email: so.Mapped[str] = so.mapped_column(sa.String(120), index=True, 
                                              unique=True)
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
+    
+    age = db.Column(db.Integer, nullable=True)
+    gender = db.Column(db.String(10), nullable=True)
+    profile_completed: so.Mapped[bool] = so.mapped_column(sa.Boolean, default=False, nullable=False)
 
     posts: so.WriteOnlyMapped['Post'] = so.relationship(
         back_populates='author')
@@ -62,6 +66,8 @@ class Post(db.Model):
     sentiment: so.Mapped[str] = so.mapped_column(sa.String(64), nullable=True)
     #label: so.Mapped[str] = so.mapped_column(sa.String(64), nullable=True)
     author: so.Mapped[User] = so.relationship(back_populates='posts')
+    #新闻类别
+    category: so.Mapped[Optional[str]] = so.mapped_column(sa.String(64), nullable=True)
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
@@ -70,3 +76,17 @@ class Post(db.Model):
 @login.user_loader
 def load_user(id):
     return db.session.get(User, int(id))
+
+
+
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
+    message = db.Column(db.String(256))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    is_read = db.Column(db.Boolean, default=False)
+
+    user = db.relationship('User', backref='notifications')
+
+    def __repr__(self):
+        return f'<Notification {self.message}>'

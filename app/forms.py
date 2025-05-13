@@ -4,7 +4,7 @@ from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 import sqlalchemy as sa
 from app import db
 from app.models import User
-from wtforms import TextAreaField
+from wtforms import TextAreaField, IntegerField, SelectField
 
 class LoginForm(FlaskForm):
     # Form for user login
@@ -47,3 +47,10 @@ class SharePostForm(FlaskForm):
     post_id = StringField('Post ID', validators=[DataRequired()])
     user_id = StringField('User ID', validators=[DataRequired()])
     submit = SubmitField('Share')
+    
+
+class FilterForm(FlaskForm):
+    age = IntegerField("Age", validators=[DataRequired()])
+    gender = SelectField("Gender", choices=[('', 'Select'), ('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
+    filter_by = SelectField("Filter by", choices=[('', 'None'), ('gender', 'Gender'), ('age', 'Age Group')])
+    submit = SubmitField("Apply")
