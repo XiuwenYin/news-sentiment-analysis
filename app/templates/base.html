@@ -32,32 +32,19 @@
 
                     {% if current_user.is_authenticated %}
                     <!-- Upload/Input dropdown -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="#" id="uploadDropdown" role="button"
-                            data-bs-toggle="dropdown">
-                            Upload/Input
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ url_for('upload') }}">Upload News</a></li>
-                            <li><a class="dropdown-item" href="#">Input Text</a></li>
-                        </ul>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('upload') }}">Upload</a>
                     </li>
 
                     <!-- Result dropdown -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="#" id="resultDropdown" role="button"
-                            data-bs-toggle="dropdown">
-                            Result
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ url_for('history') }}">View Histories</a></li>
-                        </ul>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('history') }}">History</a>
                     </li>
 
-                    <!-- User Profile -->
+                    <!-- User Insight -->
                     <li class="nav-item">
                         <a class="nav-link text-white"
-                            href="{{ url_for('user', username=current_user.username) }}">Profile</a>
+                            href="{{ url_for('user', username=current_user.username) }}">Insight</a>
                     </li>
 
                     <!-- My Share -->
