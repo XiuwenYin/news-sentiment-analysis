@@ -116,17 +116,9 @@ def upload():
     if form.validate_on_submit():
         post_title = form.post_title.data  # ✅ 用 FlaskForm 的方式拿数
         news_content = form.news_content.data
-<<<<<<< HEAD
         # 新闻类别识别
         result = news_category_classifier(news_content,truncation=True, max_length=512)
         category_result = result[0][0]['label']
-=======
-        # News category classification
-        # result = news_category_classifier(news_content)
-        result = news_category_classifier(news_content, truncation=True, max_length=512)
-        # category_result = result[0][0]['label']
-        category_result = result[0]['label']
->>>>>>> main
 
         # counting characters and sentences
         char_count = len(news_content)
