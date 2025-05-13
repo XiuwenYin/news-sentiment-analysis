@@ -46,11 +46,19 @@
                         <a class="nav-link text-white"
                             href="{{ url_for('user', username=current_user.username) }}">Insight</a>
                     </li>
+                    
 
                     <!-- My Share -->
                     <li class="nav-item">
                         <a class="nav-link text-white" href="{{ url_for('share') }}">My Share</a>
                     </li>
+
+
+                    <!-- Notification -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('notifications') }}">Notifications</a>
+                    </li>
+
 
                     <!-- Logout -->
                     <li class="nav-item">

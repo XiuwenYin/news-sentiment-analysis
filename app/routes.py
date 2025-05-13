@@ -1,7 +1,7 @@
 from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
 
-from app.models import User, Post, db, post_shares
+from app.models import User, Post, db, post_shares, Notification
 from flask import render_template, flash, redirect, url_for, request
 
 from app import app, db
@@ -213,6 +213,18 @@ def share_post_modal():
         db.session.execute(
             post_shares.insert().values(post_id=post.id, user_id=user.id)
         )
+        # Create notification for the recipient
+        notif = Notification(
+            user_id=user.id,
+            message=f'You have been shared a post: "{post.title}" by {current_user.username}'
+        )
+        db.session.add(notif)
+        # Create notification for the sharer
+        notif2 = Notification(
+            user_id=current_user.id,
+            message=f'You shared your post "{post.title}" with {user.username}'
+        )
+        db.session.add(notif2)
         db.session.commit()
         flash(f'Post "{post.title}" shared with {user.username}!', 'success')
     else:
@@ -430,5 +442,11 @@ def stats():
                            negative=negative,
                            sentiment_counter=sentiment_counter,
                            post_counts=post_counts)
+
+@app.route('/notifications')
+@login_required
+def notifications():
+    notifications = Notification.query.filter_by(user_id=current_user.id).order_by(Notification.timestamp.desc()).all()
+    return render_template('notifications.html', notifications=notifications)
 
 
