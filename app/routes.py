@@ -1,8 +1,8 @@
 from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
 
-from app.models import User, Post, db, post_shares
-from flask import render_template, flash, redirect, url_for, request
+from app.models import User, Post, db, post_shares, Notification
+from flask import render_template, flash, redirect, url_for, request, jsonify
 
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, SharePostForm, UploadForm, FilterForm
@@ -213,6 +213,18 @@ def share_post_modal():
         db.session.execute(
             post_shares.insert().values(post_id=post.id, user_id=user.id)
         )
+        # Create notification for the recipient
+        notif = Notification(
+            user_id=user.id,
+            message=f'You have been shared a post: "{post.title}" by {current_user.username}'
+        )
+        db.session.add(notif)
+        # Create notification for the sharer
+        notif2 = Notification(
+            user_id=current_user.id,
+            message=f'You shared your post "{post.title}" with {user.username}'
+        )
+        db.session.add(notif2)
         db.session.commit()
         flash(f'Post "{post.title}" shared with {user.username}!', 'success')
     else:
@@ -432,3 +444,37 @@ def stats():
                            post_counts=post_counts)
 
 
+# Notification Module
+@app.route('/notifications')
+@login_required
+def notifications():
+    notifications = Notification.query.filter_by(user_id=current_user.id).order_by(Notification.timestamp.desc()).all()
+    return render_template('notifications.html', notifications=notifications)
+
+
+@app.route('/mark_notification_read', methods=['POST'])
+@login_required
+def mark_notification_read():
+    notifs = Notification.query.filter_by(user_id=current_user.id, is_read=False).all()
+    for notif in notifs:
+        notif.is_read = True
+    db.session.commit()
+    return jsonify({'success': True})
+
+
+@app.route('/mark_notification_read_and_redirect')
+@login_required
+def mark_notification_read_and_redirect():
+    notif = Notification.query.filter_by(user_id=current_user.id, is_read=False).order_by(Notification.timestamp.desc()).first()
+    if notif:
+        notif.is_read = True
+        db.session.commit()
+    # Redirect back to the page the user came from
+    next_url = request.args.get('next') or url_for('index')
+    return redirect(next_url)
+
+
+@app.before_request
+def refresh_current_user_notifications():
+    if current_user.is_authenticated:
+        db.session.expire(current_user, ['notifications'])
