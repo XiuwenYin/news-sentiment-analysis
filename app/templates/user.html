@@ -4,7 +4,7 @@
 
 {% block content %}
 <section class="container-left">
-    <!-- 左侧导航栏 -->
+    <!-- Left Sidebar -->
     <div class="sidebar">
         <a href="javascript:void(0);" class="nav-link" onclick="showSection('category-section')">Finding</a>
         <a href="javascript:void(0);" class="nav-link" onclick="showSection('trend-section')">Sentiment Trend</a>
@@ -13,9 +13,9 @@
         <a href="javascript:void(0);" class="nav-link" onclick="showSection('activity-section')">Daily Post Activity</a>
     </div>
 
-    <!-- 右侧图表内容 -->
+    <!-- Right side chart content -->
     <div class="content">
-        <!-- 引导介绍 -->
+        <!-- Introduction guide -->
         <div id="top-feature" class="alert alert-light border rounded p-4 mb-4 shadow-sm">
             <h5><strong>Curious about what people your age or gender are interested in? 🧐</strong>
             </h5>
@@ -28,18 +28,18 @@
             </p>
             <p><strong>Try it now and uncover your unique news world! 💥🗞️</strong></p>
         </div>
-        <!-- 年龄和性别 -->
-        <!-- 当前用户信息 -->
+        <!-- Age and Gender -->
+        <!-- Current User Information -->
         <form method="POST" class="mb-4">
             {{ form.hidden_tag() }}
             <div class="row">
-                <!-- 一次性保存的年龄 -->
+                <!-- Age to be saved -->
                 <div class="col-md-3">
                     <label>Age</label>
                     <input name="age" type="number" class="form-control" value="{{ user.age or '' }}">
                 </div>
 
-                <!-- 一次性保存的性别 -->
+                <!-- Gender to be saved -->
                 <div class="col-md-3">
                     <label>Gender</label>
                     <select name="gender" class="form-control">
@@ -50,7 +50,7 @@
                     </select>
                 </div>
 
-                <!-- 用于筛选：按性别 -->
+                <!-- For filtering: by gender -->
                 <div class="col-md-3">
                     <label>Filter by Gender</label>
                     <select name="gender_filter" class="form-control">
@@ -61,7 +61,7 @@
                     </select>
                 </div>
 
-                <!-- 用于筛选：按年龄段 -->
+                <!-- For filtering: by age group -->
                 <div class="col-md-3">
                     <label>Filter by Age Group</label>
                     <select name="age_group" class="form-control">
@@ -97,7 +97,7 @@
         {% endif %}
 
         <h2 id="statistics-section" class="mb-4 text-center">📊 User Statistics</h2>
-        <!-- 引导介绍 -->
+        <!-- Introduction Guide -->
         <div class="alert alert-light border rounded p-4 mb-4 shadow-sm">
             <h5><strong>Your Mood, Your Moments — Visualized 💬</strong></h5>
             <p>
@@ -154,7 +154,7 @@
     const categoryLabels = {{ category_labels| tojson }};
     const categoryValues = {{ category_values| tojson }};
 
-    // 折线图
+    // Line chart
     new Chart(document.getElementById("categoryChart"), {
         type: "bar",
         data: {
@@ -171,7 +171,7 @@
         }
     });
 
-    // 折线图
+    // Line chart
     new Chart(document.getElementById('trendChart'), {
         type: 'line',
         data: {
@@ -183,12 +183,12 @@
             ],
             options: {
                 responsive: true,
-                maintainAspectRatio: false // 禁止固定比例，才能真正拉伸
+                maintainAspectRatio: false // disable fixed aspect ratio to allow proper stretching
             }
         }
     });
 
-    // 饼图
+    // Pie chart
     new Chart(document.getElementById('distributionChart'), {
         type: 'pie',
         data: {
@@ -199,12 +199,12 @@
             }],
             options: {
                 responsive: true,
-                maintainAspectRatio: false // 禁止固定比例，才能真正拉伸
+                maintainAspectRatio: false // disable fixed aspect ratio to allow proper stretching
             }
         }
     });
 
-    // 柱状图
+    // Bar chart
     new Chart(document.getElementById('activityChart'), {
         type: 'bar',
         data: {
@@ -216,35 +216,35 @@
             }],
             options: {
                 responsive: true,
-                maintainAspectRatio: false // 禁止固定比例，才能真正拉伸
+                maintainAspectRatio: false // disable fixed aspect ratio to allow proper stretching
             }
         }
     });
 
-    // 显示某个图表区域，隐藏其他区域
+    // Hide all chart sections initially
     document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll('.chart-section').forEach(section => {
             section.style.display = 'none';
         });
 
-        // 如果后端返回分类图表有数据，则显示 category-section
+        // Show the first section by default
         {% if category_distribution %}
         document.getElementById('category-section').style.display = 'block';
         {% endif %}
     });
 
     function showSection(sectionId) {
-        // 隐藏所有图表部分
+        // Hide all chart sections
         const sections = document.querySelectorAll(".chart-section");
         sections.forEach(sec => sec.style.display = "none");
 
-        // 显示目标图表部分
+        // Display the target chart section
         const target = document.getElementById(sectionId);
         if (target) {
             target.style.display = "block";
         }
 
-        // 只有非 category-section 时才滚动到 User Statistics 区域
+        // Only scroll to User Statistics area when not on category-section
         if (sectionId !== 'category-section') {
             const statsHeader = document.getElementById("statistics-section");
             if (statsHeader) {

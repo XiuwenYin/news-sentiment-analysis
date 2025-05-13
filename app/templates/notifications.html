@@ -6,7 +6,8 @@
     <ul class="list-group">
         {% for notif in notifications %}
         <li class="list-group-item{% if not notif.is_read %} list-group-item-info{% endif %}">
-            {{ notif.message }} <span class="text-muted float-end">{{ notif.timestamp.strftime('%Y-%m-%d %H:%M') }}</span>
+            {{ notif.message }} <span class="text-muted float-end">{{ notif.timestamp.strftime('%Y-%m-%d %H:%M')
+                }}</span>
         </li>
         {% else %}
         <li class="list-group-item">No notifications.</li>

@@ -266,7 +266,7 @@ def user(username):
     gender_filter = None
     category_distribution = {}
 
-    # ✅ 保存一次年龄和性别（只在POST提交中且之前为空时）
+    # Save age and gender (only in POST submission and if previously empty)
     if request.method == "POST":
         submitted_age = request.form.get("age")
         submitted_gender = request.form.get("gender")
@@ -278,11 +278,11 @@ def user(username):
 
         db.session.commit()
 
-        # ✅ 获取筛选项
+        # Get filter options
         gender_filter = request.form.get("gender_filter")
         age_group = request.form.get("age_group")
 
-        # ✅ 筛选：按性别
+        # Filter: by gender
         if gender_filter:
             result = db.session.execute(
                 sa.select(Post.category, func.count(Post.id))
@@ -292,7 +292,7 @@ def user(username):
             )
             category_distribution = dict(result.all())
 
-        # ✅ 筛选：按年龄段
+        # Filter: by age group
         elif age_group:
             try:
                 min_age, max_age = map(int, age_group.split('-'))
@@ -306,7 +306,7 @@ def user(username):
             except ValueError:
                 flash("Invalid age group format", "danger")
 
-    # ✅ 统计最近7天的帖子
+    # Count posts from the last 7 days
     seven_days_ago = datetime.utcnow() - timedelta(days=7)
     posts = Post.query.filter(
         Post.user_id == current_user.id,
@@ -319,7 +319,7 @@ def user(username):
         'Positive': sum(1 for post in posts if post.sentiment == 'Positive')
     }
 
-    # ✅ 准备图表数据
+    # Prepare chart data
     daily_sentiment = {}
     sentiment_counter = Counter()
     daily_post_count = Counter()
@@ -338,7 +338,7 @@ def user(username):
     negative = [daily_sentiment[d].get('Negative', 0) for d in dates]
     post_counts = [daily_post_count[d] for d in dates]
 
-    # ✅ 渲染模板
+    # Render template
     return render_template('user.html',
         user=user,
         form=form,
