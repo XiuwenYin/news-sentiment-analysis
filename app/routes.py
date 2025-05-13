@@ -114,10 +114,10 @@ def upload():
 
     form = UploadForm()
     if form.validate_on_submit():
-        post_title = form.post_title.data  # ✅ 用 FlaskForm 的方式拿数据
+        post_title = form.post_title.data  # ✅ 用 FlaskForm 的方式拿数
         news_content = form.news_content.data
         # 新闻类别识别
-        result = news_category_classifier(news_content)
+        result = news_category_classifier(news_content,truncation=True, max_length=512)
         category_result = result[0][0]['label']
 
         # counting characters and sentences
@@ -125,11 +125,13 @@ def upload():
         sentence_count = len([s for s in re.split(r'[.!?]', news_content) if s.strip()])
 
          # sentiment analysis
-        emotion_scores = emotion_classifier(news_content)[0]
+        # emotion_scores = emotion_classifier(news_content)[0]
+        emotion_scores = emotion_classifier(news_content, truncation=True, max_length=512)[0]
         emotion_scores_sorted = sorted(emotion_scores, key=lambda x: x['score'], reverse=True)
 
         # Sentiment analysis (positive/neutral/negative)
-        sentiment_output = sentiment_classifier(news_content)
+        # sentiment_output = sentiment_classifier(news_content)
+        sentiment_output = sentiment_classifier(news_content, truncation=True, max_length=512)
         sentiment = sentiment_label_map[sentiment_output[0]["label"]]
 
         # Save to database
