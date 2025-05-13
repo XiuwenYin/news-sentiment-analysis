@@ -1,38 +1,55 @@
 {% extends "base.html" %}
-{% block content %}
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Your Analysis History</h2>
 
-    {% for date, posts in grouped_posts.items() %}
-    <h4 class="mt-4">{{ date }}</h4>
-    <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th scope="col">Time</th>
-                <th scope="col">News Title</th>
-                <th scope="col">Sentiment</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for post in posts %}
-            <tr>
-                <td>{{ post.timestamp.strftime('%H:%M:%S') }}</td>
-                <td><a href="{{ url_for('post_detail', post_id=post.id) }}">{{ post.title }}</a></td>
-                <td>
-                    {% if post.sentiment == 'Positive' %}
-                    <span class="badge bg-success">Positive</span>
-                    {% elif post.sentiment == 'Negative' %}
-                    <span class="badge bg-danger">Negative</span>
-                    {% elif post.sentiment == 'Neutral' %}
-                    <span class="badge bg-secondary">Neutral</span>
-                    {% else %}
-                    <span class="badge bg-dark">None</span>
-                    {% endif %}
-                </td>
-            </tr>
+{% block title %}Analysis History{% endblock %} {# Consistent title capitalization #}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    {# Add a wrapper div for overall styling of the history content #}
+    <div class="history-container-card"> {# New wrapper with a custom class #}
+
+        <h2 class="text-center mb-4 history-title">Your Analysis History</h2> {# Added custom class #}
+
+        {% if grouped_posts %}
+            {% for date, posts in grouped_posts.items() %}
+            <div class="date-group mb-4"> {# Wrapper for each date group for better spacing/styling #}
+                <h4 class="date-header mb-3">{{ date }}</h4> {# Added custom class and bottom margin #}
+                <div class="table-responsive"> {# Make table responsive on small screens #}
+                    <table class="table history-table"> {# Removed Bootstrap styling classes, added custom class #}
+                        <thead> {# Removed .table-dark, will style with custom CSS #}
+                            <tr>
+                                <th scope="col">Time</th>
+                                <th scope="col">News Title</th>
+                                <th scope="col">Sentiment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for post in posts %}
+                            <tr>
+                                <td>{{ post.timestamp.strftime('%H:%M:%S') }}</td>
+                                <td><a href="{{ url_for('post_detail', post_id=post.id) }}">{{ post.title }}</a></td>
+                                <td>
+                                    {# Using specific classes for badges for easier custom styling if needed #}
+                                    {% if post.sentiment == 'Positive' %}
+                                    <span class="badge bg-success custom-badge">Positive</span>
+                                    {% elif post.sentiment == 'Negative' %}
+                                    <span class="badge bg-danger custom-badge">Negative</span>
+                                    {% elif post.sentiment == 'Neutral' %}
+                                    <span class="badge bg-secondary custom-badge">Neutral</span>
+                                    {% else %}
+                                    <span class="badge bg-dark custom-badge">None</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             {% endfor %}
-        </tbody>
-    </table>
-    {% endfor %}
+        {% else %}
+            <p class="text-center no-history-message">You have no analysis history yet.</p> {# Message for no history, added class #}
+        {% endif %}
+
+    </div>
 </div>
 {% endblock %}

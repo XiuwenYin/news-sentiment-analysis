@@ -3,90 +3,85 @@
 {% block title %}Homepage{% endblock %}
 
 {% block content %}
-<!-- Core Functionality Area -->
 <section class="container-left">
-    <!-- Left Navigation Bar -->
     <div class="sidebar">
         <a href="#overview" class="active">Overview</a>
         <a href="#features">Features</a>
         <a href="#benefits">Benefits</a>
         <a href="#Applicable scenarios">Applicable scenarios</a>
+        {# Consider adding reveal-on-scroll to sidebar links if the sidebar itself is very long and scrolls #}
     </div>
 
-    <!-- Right Content -->
     <div class="content">
-        <!-- Overview -->
-        <h2 id="overview">Purpose</h2>
-        <p>
-            This product uses text analysis technology to deeply mine data, extracting categories, classifications,
-            entities, keywords, emotions, feelings, relationships, and grammar.
-        </p>
-        <p>
-            This product is dedicated to news sentiment analysis. Users can obtain positive, negative, neutral and
-            other emotional information by uploading news texts, which has multiple meanings for individuals.</p>
-        <ul>
-            <li><strong>Information filtering</strong><br>Individuals can quickly obtain the emotional inclination of
-                news, help
-                judge the credibility and importance of information, and make more informed decisions.</li>
-            <li><strong>Emotional regulation</strong><br>Understanding news emotions helps individuals manage their
-                emotional
-                reactions and avoid unnecessary anxiety and emotional fluctuations caused by negative news.</li>
-            <li><strong>Decision basis</strong><br>In life or investment decisions, one can refer to the results of news
-                sentiment
-                analysis to help individuals assess risks and opportunities.</li>
-        </ul>
+        <div class="reveal-on-scroll"> {# Wrap section content for a grouped reveal #}
+            <h2 id="overview">Purpose</h2>
+            <p>
+                This product uses text analysis technology to deeply mine data, extracting categories, classifications,
+                entities, keywords, emotions, feelings, relationships, and grammar.
+            </p>
+            <p>
+                This product is dedicated to news sentiment analysis. Users can obtain positive, negative, neutral and
+                other emotional information by uploading news texts, which has multiple meanings for individuals.</p>
+            <ul>
+                <li class="reveal-on-scroll delay-100ms"><strong>Information filtering</strong><br>Individuals can quickly obtain the emotional inclination of
+                    news, help
+                    judge the credibility and importance of information, and make more informed decisions.</li>
+                <li class="reveal-on-scroll delay-200ms"><strong>Emotional regulation</strong><br>Understanding news emotions helps individuals manage their
+                    emotional
+                    reactions and avoid unnecessary anxiety and emotional fluctuations caused by negative news.</li>
+                <li class="reveal-on-scroll delay-300ms"><strong>Decision basis</strong><br>In life or investment decisions, one can refer to the results of news
+                    sentiment
+                    analysis to help individuals assess risks and opportunities.</li>
+            </ul>
+        </div>
 
-        <!-- Founction -->
-        <h2 id="features">Features</h2>
+        <h2 id="features" class="reveal-on-scroll">Features</h2>
         <div class="feature-section">
-            <div class="feature-box">
+            <div class="feature-box reveal-on-scroll">
                 <h4>✏️ Input text</h4>
                 <p>Directly paste news content for analysis</p>
             </div>
-            <div class="feature-box">
+            <div class="feature-box reveal-on-scroll delay-100ms">
                 <h4>📂 Upload files</h4>
                 <p>Support uploading and analyzing txt and docx files</p>
             </div>
-            <div class="feature-box">
+            <div class="feature-box reveal-on-scroll delay-200ms">
                 <h4>📊 Real time results</h4>
                 <p>Generate clear and intuitive sentiment analysis charts</p>
             </div>
-            <div class="feature-box">
+            <div class="feature-box reveal-on-scroll delay-300ms">
                 <h4>🤝 Result sharing</h4>
                 <p>One click sharing and analyzing data with colleagues</p>
             </div>
         </div>
 
-        <!-- Benefits -->
-        <h2 id="benefits">Benefits</h2>
+        <h2 id="benefits" class="reveal-on-scroll">Benefits</h2>
         <ul>
-            <li><strong>Customer feedback insight:</strong><br>
+            <li class="reveal-on-scroll delay-100ms"><strong>Customer feedback insight:</strong><br>
                 Analyzing customers' emotional responses to news reports helps businesses understand user needs and
                 improve products and services.
             </li>
 
-            <li><strong>Media content optimization:</strong><br>
+            <li class="reveal-on-scroll delay-200ms"><strong>Media content optimization:</strong><br>
                 News organizations can adjust their reporting strategies and content based on audience emotions, thereby
                 enhancing reader engagement and retention.
             </li>
 
-            <li><strong>Social issue identification:</strong><br>
+            <li class="reveal-on-scroll delay-300ms"><strong>Social issue identification:</strong><br>
                 By analyzing sentiment in news content, organizations can identify emerging social issues and take
                 timely action through research or intervention.
             </li>
 
-            <li><strong>Cross-cultural understanding:</strong><br>
+            <li class="reveal-on-scroll delay-400ms"><strong>Cross-cultural understanding:</strong><br>
                 Sentiment analysis enables better recognition of culturally sensitive topics and helps institutions
                 promote inclusivity and targeted communication across diverse audiences.
             </li>
         </ul>
 
-        <!-- Applicable scenarios -->
-        <h2 id="Applicable scenarios">Applicable scenarios</h2>
+        <h2 id="Applicable scenarios" class="reveal-on-scroll">Applicable scenarios</h2>
         <div class="row g-4">
 
-            <!-- Applicable scenarios 1 -->
-            <div class="col-md-4">
+            <div class="col-md-4 reveal-on-scroll">
                 <div class="scene-card"
                     style="background-image: url('{{ url_for('static', filename='images/interview.webp') }}');">
                     <div class="overlay">
@@ -96,8 +91,7 @@
                 </div>
             </div>
 
-            <!-- Applicable scenarios 2 -->
-            <div class="col-md-4">
+            <div class="col-md-4 reveal-on-scroll delay-100ms">
                 <div class="scene-card"
                     style="background-image: url('{{ url_for('static', filename='images/遥控.jpg') }}');">
                     <div class="overlay">
@@ -107,8 +101,7 @@
                 </div>
             </div>
 
-            <!-- Applicable scenarios 3 -->
-            <div class="col-md-4">
+            <div class="col-md-4 reveal-on-scroll delay-200ms">
                 <div class="scene-card"
                     style="background-image: url('{{ url_for('static', filename='images/人物.jpg') }}');">
                     <div class="overlay">
@@ -124,5 +117,6 @@
 
 
 {% block scripts %}
+{{ super() }} {# Optional: if your base.html has scripts you want to include before this one #}
 <script src="{{ url_for('static', filename='js/homepage.js') }}"></script>
 {% endblock %}

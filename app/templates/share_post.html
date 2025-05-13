@@ -1,25 +1,45 @@
 {% extends "base.html" %}
 
-{% block title %}Share Post{% endblock %}
+{% block title %}Share Post: {{ post.title }}{% endblock %} {# More specific title #}
 
 {% block content %}
-<div class="container mt-5">
-    <!-- Page heading with the post title -->
-    <h2 class="text-center mb-4">Share Post: {{ post.title }}</h2>
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center"> {# Center the card #}
+        <div class="col-md-8 col-lg-7"> {# Limit card width #}
 
-    <!-- Form to select users and share the post -->
-    <form method="POST">
-        <div class="form-group">
-            <label for="usernames">Select users to share with:</label>
-            <select name="usernames" id="usernames" class="form-control" multiple>
-                <!-- Dynamically populate user options -->
-                {% for user in users %}
-                <option value="{{ user.username }}">{{ user.username }}</option>
-                {% endfor %}
-            </select>
+            {# Use a card class consistent with other dark theme form cards #}
+            <div class="card share-post-details-card">
+                <div class="card-body p-4 p-md-5">
+
+                    <h2 class="text-center mb-3 card-title-custom">Share Post</h2> {# Generic title, post title below #}
+                    <p class="text-center text-muted mb-4 post-title-to-share"><em>{{ post.title }}</em></p> {# Display post title separately #}
+
+                    <form method="POST">
+
+                        <div class="mb-4"> {# Increased margin-bottom #}
+                            <label for="usernames" class="form-label">Select users to share with:</label>
+                            {# Add form-select for Bootstrap styling and make it larger #}
+                            <select name="usernames" id="usernames" class="form-control form-select form-select-lg" multiple required size="8"> {# Added size attribute #}
+                                {% if users %}
+                                    {% for user in users %}
+                                    <option value="{{ user.username }}">{{ user.username }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="" disabled>No other users available to share with.</option>
+                                {% endif %}
+                            </select>
+                            <small class="form-text text-muted">Hold down Ctrl (Cmd on Mac) to select multiple users.</small>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4"> {# Full-width button #}
+                            <button type="submit" class="btn btn-primary btn-lg">Share Selected</button> {# Made button larger and text more specific #}
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
         </div>
-        <!-- Submit button -->
-        <button type="submit" class="btn btn-primary mt-3">Share</button>
-    </form>
+    </div>
 </div>
 {% endblock %}

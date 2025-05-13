@@ -1,278 +1,998 @@
-/* Fancy Title */
-.navbar-brand {
-    font-family: 'Lucida Handwriting', cursive;
-    /* Set font */
-    font-size: 2em;
-    /* Adjust font size */
-    color: #000;
-    /* Font color */
-}
+/* === Global Body Styles (incorporating styles from base.html and new fixed background) === */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    /* color: #1d1d1f; */ /* Default body text color, will be overridden by specific sections */
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
 
-/* Top Navigation Bar */
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #f9f9f9;
-    padding: 12px 40px;
-    border-bottom: 1px solid #ddd;
-    font-family: 'Segoe UI', sans-serif;
-}
-
-.navbar-brand {
-    font-size: 22px;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-.nav-item a {
-    text-decoration: none;
-    color: #333;
-    font-size: 16px;
-    position: relative;
-    padding: 5px 0;
-    transition: 0.3s;
-}
-
-.nav-item a:hover {
-    color: #007bff;
-}
-
-.nav-item a.active::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 2px;
-    background-color: #007bff;
-    bottom: -4px;
-    left: 0;
-}
-.dropdown-menu {
-    text-align: center;
-    /* Center menu content */
-}
-
-.dropdown-item {
-    text-align: center;
-    /* Center each item */
-}
-
-/* Hero Section */
-.hero-section {
-    width: 100%;
-    height: 40vh;
+    /* Fixed background image for the "赏花" effect */
+    background-image: url('../images/background.jpg'); /* Path relative to homepage.css (app/static/images/background.jpg) */
+    background-attachment: fixed;
     background-size: cover;
-    background-position: center;
+    background-position: center center;
     background-repeat: no-repeat;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
 
-.hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    /* Semi-transparent overlay */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.hero-content {
-    text-align: center;
-    color: white;
-    padding: 20px;
-
-}
-
-.hero-content h1 {
-    font-size: 36px;
-    font-weight: bold;
-}
-
-.hero-content p {
-    font-size: 18px;
-    margin-top: 15px;
-}
-/* Cursor Caption */
-#cursor {
-    display: inline-block;
-    width: 1px;
-    background-color: white;
-    animation: blink 1s steps(2, start) infinite;
-    margin-left: 2px;
-}
-
-/* Core Functionality Area: Navigation + Explanation */
-/* Left Sidebar */
-.container-left {
-    display: flex;
+    /* Layout for sticky footer and fixed navbar padding (moved from base.html inline style) */
+    padding-top: 70px; 
     min-height: 100vh;
-}
-
-.sidebar {
-    width: 220px;
-    background-color: #f7f7f7;
-    padding: 20px;
-    border-right: 1px solid #ddd;
-}
-
-.sidebar a {
-    display: block;
-    padding: 10px;
-    color: #333;
-    text-decoration: none;
-    border-left: 3px solid transparent;
-    margin-bottom: 5px;
-}
-
-.sidebar a.active,
-.sidebar a:hover {
-    border-left: 3px solid #007bff;
-    font-weight: bold;
-    color: #007bff;
-    background-color: #e8e8e8;
-}
-
-.content {
-    flex: 1;
-    padding: 10px;
-}
-
-h2 {
-    margin-top: 40px;
-    margin-bottom: 20px;
-    color: #222;
-}
-
-.content ul {
-    margin-top: 10px;
-    padding-left: 20px;
-}
-
-.content li {
-    line-height: 1.8;
-}
-
-/* 右边：核心功能区 */
-.feature-section {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    margin-top: 40px;
-}
-
-.feature-box {
-    width: 45%;
-    margin: 10px 0;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-}
-
-.feature-box h4 {
-    margin-bottom: 10px;
-}
-
-/* Right Side: Benefits Section */
-.card {
-    border-radius: 12px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.card-hover:hover {
-    transform: translateY(-8px) scale(1.03);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-}
-
-h5 {
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
-}
-
-/* Right Side: Usage Scenarios Section */
-.scene-card {
-    position: relative;
-    width: 100%;
-    height: 250px;
-    background-size: cover;
-    background-position: center;
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.scene-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-}
-
-.overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-    /* Black semi-transparent overlay */
-    color: #fff;
-    /* White text!!! */
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    text-align: center;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
-    /* Make white text more three-dimensional */
+}
+
+/* Helper for sticky footer if you added a wrapper in base.html */
+.main-content-area-wrapper { 
+    flex: 1 0 auto;
+}
+
+/* === Footer Styles === */
+a {
+    color: #007aff;
+    text-decoration: none;
+    transition: color 0.25s ease;
+}
+
+a:hover {
+    color: #0056b3;
+}
+
+/* Softer shadows */
+.soft-shadow {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.subtle-shadow {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 
-.overlay h4 {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 10px;
+/* === Navbar Styles === */
+
+.navbar.fixed-top { 
+    padding: 10px 25px; 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; /* Consistent font */
+    backdrop-filter: blur(8px);   
+    -webkit-backdrop-filter: blur(8px);
 }
 
-.scenario-overlay p {
-    font-size: 1rem;
+/* Fancy Title for navbar-brand (Keep as is, if used) */
+.navbar-brand.fancy-title {
+    font-family: 'Lucida Handwriting', cursive;
+    font-size: 2em;
+    color: #ffffff; /* Ensure it's white on dark navbar */
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+.navbar-brand.fancy-title:hover {
+    transform: scale(1.05);
 }
 
-/* Navigation Bar Animation */
-.navbar .nav-link,
-.navbar .navbar-brand {
-    position: relative;
-    display: inline-block;
-    transition: color .25s ease, transform .25s ease;
+/* Default navbar-brand */
+.navbar.fixed-top .navbar-brand {
+    font-size: 22px;
+    font-weight: 600;
+    transition: color 0.3s ease, transform 0.3s ease; /* Keep transitions */
+}
+.navbar.fixed-top .navbar-brand:hover {
+    transform: scale(1.03);
 }
 
-.navbar-dark .nav-link:hover,
-.navbar-dark .navbar-brand:hover {
-    color: #ffffff;    
-    transform: scale(1.08); 
+/* Navigation Items (ensure text is white on dark navbar) */
+.navbar.fixed-top .nav-item .nav-link { /* More specific to override defaults if needed */
+    /* color: #1d1d1f; */ /* Original was for light navbar. Bootstrap navbar-dark handles this. */
+    font-size: 17px;
+    font-weight: 500;
+    position: relative; /* For ::after pseudo-elements */
+    padding: 8px 15px;
+    transition: color 0.25s ease, background-color 0.25s ease;
+    border-radius: 6px;
+}
+.navbar.fixed-top .nav-item .nav-link:hover {
+    /* color: #007aff; */ /* Bootstrap navbar-dark handles hover, or keep your custom hover color */
+    background-color: rgba(255, 255, 255, 0.1); /* Subtle white hover background on dark navbar */
 }
 
-.navbar .nav-link::after,
-.navbar .navbar-brand::after {
+/* Active link indicator for dark navbar */
+.navbar.fixed-top .nav-item a.active {
+    color: #00AFFF; /* Brighter blue for active on dark, or keep #007aff */
+    font-weight: 600;
+}
+.navbar.fixed-top .nav-item a.active::after {
+    background-color: #00AFFF; /* Match active color */
+    /* Keep other ::after styles */
+    content: '';
+    position: absolute;
+    width: 50%;
+    height: 2.5px;
+    bottom: -2px;
+    left: 25%;
+    border-radius: 1px;
+    transition: width 0.3s ease, left 0.3s ease;
+}
+
+/* Navbar animations for underline on hover (Keep, adjust color if needed for dark theme) */
+.navbar.fixed-top .nav-link:not(.active):hover::after,
+.navbar.fixed-top .navbar-brand:not(.fancy-title):hover::after { /* Exclude fancy title from this specific underline if it has its own effects */
     content: "";
     position: absolute;
     left: 50%;
     bottom: -4px;
     width: 0;
     height: 2px;
-    background: #ffffff;
+    background: #00AFFF; /* Underline color on hover, match active or accent */
     transition: width .25s ease, left .25s ease;
 }
-.navbar .nav-link:hover::after,
-.navbar .navbar-brand:hover::after {
+.navbar.fixed-top .nav-link:not(.active):hover::after,
+.navbar.fixed-top .navbar-brand:not(.fancy-title):hover::after {
     width: 100%;
-    left: 0; 
+    left: 0;
 }
 
-.navbar-dark .navbar-toggler-icon {
-    filter: brightness(200%);
+/* Dropdown Menu (Bootstrap default is light, these styles keep it light) */
+/* If you want dark dropdowns, you'd need to override Bootstrap's .dropdown-menu significantly */
+.dropdown-menu {
+    text-align: left;
+    background-color: #ffffff;
+    border: 1px solid #d2d2d7;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    padding: 8px 0;
 }
+.dropdown-item {
+    text-align: left;
+    color: #1d1d1f;
+    padding: 10px 20px;
+    font-size: 16px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.dropdown-item:hover, .dropdown-item:focus {
+    background-color: #007aff;
+    color: #ffffff;
+}
+
+
+/* === Hero Section === */
+.hero-section {
+    width: 100%;
+    height: 50vh; /* Adjusted from 55vh, or use your preferred height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative; /* Keep for overlay positioning */
+    overflow: hidden;
+    color: white; /* Default text color for hero content */
+}
+
+.hero-overlay { /* Keep as is, provides contrast */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.45); /* Adjusted from 0.38 for potentially better contrast */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-content { /* Keep as is */
+    text-align: center;
+    padding: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInSlideUp 1s 0.3s ease-out forwards;
+}
+
+@keyframes fadeInSlideUp { /* Keep as is */
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-content h1 { /* Keep as is */
+    font-size: 3.2em;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.35);
+}
+
+.hero-content p { /* Keep as is */
+    font-size: 1.4em;
+    margin-top: 20px;
+    font-weight: 400;
+    max-width: 650px;
+    line-height: 1.65;
+}
+
+#cursor { /* Keep as is */
+    display: inline-block;
+    width: 2px;
+    height: 0.9em;
+    background-color: white;
+    animation: blink 1s steps(1, end) infinite;
+    margin-left: 4px;
+    vertical-align: baseline;
+}
+
+@keyframes blink { /* Keep as is */
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+
+/* === Container for Left Sidebar and Content === */
+.container-left {
+    background-color: #0D1117; 
+    padding: 20px;          
+    border-radius: 10px;   
+    margin-top: 20px;   
+    margin-bottom: 30px;    
+    display: flex; 
+}
+
+
+/* --- Styles for elements INSIDE .container-left (Dark Theme Adaptation) --- */
+.container-left .sidebar {
+    width: 250px;
+    background-color: rgba(30, 38, 53, 0.65);
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+    padding: 25px 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.container-left .sidebar h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: #888888; /* Lighter gray for section titles */
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-top: 25px;
+    margin-bottom: 12px;
+    padding-left: 10px;
+}
+.container-left .sidebar h3:first-of-type {
+    margin-top: 5px;
+}
+
+.container-left .sidebar a {
+    display: block;
+    padding: 12px 15px 12px 20px;
+    color: #bbbbbb; /* Light gray for sidebar links */
+    text-decoration: none;
+    border-left: 4px solid transparent;
+    margin-bottom: 6px;
+    border-radius: 0 8px 8px 0;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.container-left .sidebar a.active,
+.container-left .sidebar a:hover {
+    border-left-color: #007aff;
+    font-weight: 500;
+    color: #007bff; /* Accent blue */
+    background-color: rgba(0, 122, 255, 0.1); /* Subtle blue highlight */
+}
+
+/* Main Content Area within .container-left */
+.container-left .content {
+    flex: 1;
+    padding: 30px 40px;
+    overflow-y: auto;
+    /* background-color: #ffffff; */ /* Remove white background, inherits from .container-left or can be specific dark shade */
+}
+
+.container-left .content h2 {
+    font-size: 2em;
+    font-weight: 600;
+    margin-top: 20px;
+    margin-bottom: 25px;
+    color: #ffffff; /* White headings */
+    border-bottom: 1px solid #333333; /* Darker border */
+    padding-bottom: 12px;
+}
+
+.container-left .content ul {
+    margin-top: 15px;
+    padding-left: 25px;
+    list-style-type: disc;
+}
+
+.container-left .content li {
+    line-height: 1.85;
+    margin-bottom: 12px;
+    color: #cccccc; /* Light gray for list items */
+}
+.container-left .content li strong {
+    color: #e8e8e8; /* Slightly brighter for strong text */
+}
+
+.container-left .content p {
+    font-size: 1.05em;
+    line-height: 1.75;
+    color: #cccccc; /* Light gray for paragraphs */
+    margin-bottom: 20px;
+}
+
+/* Feature Section within .container-left */
+.container-left .feature-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.container-left .feature-box {
+    flex: 1 1 calc(45% - 30px);
+    min-width: 280px;
+    padding: 28px;
+    background-color: #1c1c1c; /* Dark background for feature boxes */
+    border: 1px solid #333333; /* Darker border */
+    border-radius: 14px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2); /* Adjusted shadow for dark theme */
+    color: #cccccc; /* Default text color inside feature box */
+}
+
+.container-left .feature-box:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.3); /* Adjusted shadow for dark theme */
+}
+
+.container-left .feature-box h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.35em;
+    font-weight: 600;
+    color: #ffffff; /* White headings */
+}
+
+.container-left .feature-box p {
+    font-size: 1em;
+    line-height: 1.7;
+    color: #bbbbbb; /* Lighter gray for paragraph text */
+}
+
+/* Cards within .container-left (Benefits Section, etc.) */
+.container-left .card {
+    background-color: rgba(44, 54, 73, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px) saturate(130%);
+    border-radius: 12px;
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25); /* Adjusted shadow for dark theme */
+    overflow: hidden;
+    margin-bottom: 25px;
+    color: #cccccc;
+}
+
+.container-left .card-hover:hover {
+    transform: translateY(-10px) scale(1.025);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35); /* Adjusted shadow for dark theme */
+}
+
+.container-left .card h5 {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #ffffff; /* White card titles */
+    margin-top: 0;
+    padding: 20px 22px 8px;
+}
+
+.container-left .card .card-body p {
+    font-size: 0.95em;
+    color: #bbbbbb; /* Lighter gray for card body text */
+    line-height: 1.65;
+    padding: 0 22px 20px;
+    margin-bottom:0;
+}
+
+/* Scene Cards within .container-left (Applicable Scenarios) */
+.container-left .scene-card {
+    position: relative;
+    width: 100%;
+    height: 280px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 18px;
+    overflow: hidden;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.25); /* Adjusted shadow */
+    margin-bottom: 25px;
+}
+
+.container-left .scene-card:hover {
+    transform: translateY(-8px) scale(1.015);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35); /* Adjusted shadow */
+}
+
+.container-left .scene-card .overlay { 
+    color: #ffffff;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding: 28px;
+    text-align: left;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.85); /* Slightly stronger text shadow */
+    transition: background 0.3s ease;
+}
+
+.container-left .scene-card .overlay h4 {
+    font-size: 1.7em;
+    font-weight: 600;
+    margin-bottom: 8px;
+    line-height: 1.25;
+    color: #ffffff; /* Explicitly white */
+}
+
+.container-left .scene-card .overlay p {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.55;
+    margin-bottom: 0;
+    color: #f0f0f0; /* Explicitly light */
+}
+
+
+/* === Scroll Animation Classes (Keep as is) === */
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.65s ease-out, transform 0.65s ease-out;
+}
+
+.reveal-on-scroll.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* === Styles for Upload Page Form Card === */
+
+.upload-form-card {
+    background-color: #2E3440;
+    border: 1px solid #4C566A;  
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); 
+    /* padding is handled by .card-body in your upload.html */
+}
+
+.upload-form-card .card-title-custom { 
+    color: #ECEFF4;  
+    font-weight: 600;
+    margin-bottom: 1.75rem;    
+}
+
+.upload-form-card .form-label {
+    color: #D8DEE9;      
+    margin-bottom: 0.6rem;     
+    font-weight: 500;
+}
+
+.upload-form-card .form-control {
+    background-color: #3B4252;  
+    border: 1px solid #4C566A;
+    color: #ECEFF4;           
+    border-radius: 0.375rem;  
+    padding: 0.75rem 1rem;  
+}
+
+.upload-form-card .form-control::placeholder {
+    color: #A3B1C2;       
+    opacity: 0.8;        
+}
+
+.upload-form-card .form-control:focus {
+    background-color: #434C5E;  
+    border-color: #88C0D0;   
+    color: #ECEFF4;
+    box-shadow: 0 0 0 0.25rem rgba(136, 192, 208, 0.25); 
+}
+
+.upload-form-card .btn-primary {
+    background-color: #5E81AC; 
+    border-color: #5E81AC;
+    color: #ECEFF4; 
+    padding: 0.6rem 1.2rem; 
+    font-weight: 500;
+}
+
+.upload-form-card .btn-primary:hover {
+    background-color: #81A1C1; 
+    border-color: #81A1C1;
+}
+
+.upload-form-card .invalid-feedback.d-block { 
+    color: #BF616A;
+    font-size: 0.9em;
+    margin-top: 0.25rem;
+}
+
+/* === History Page Styles === */
+.history-container-card {
+    background-color: #2E3440;
+    border: 1px solid #4C566A;
+    border-radius: 10px;
+    padding: 25px 30px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    color: #D8DEE9;
+    margin-bottom: 3rem; /* Added for spacing from footer */
+}
+
+.history-title {
+    color: #ECEFF4;
+    font-weight: 600;
+    margin-bottom: 2rem;
+}
+
+.date-header {
+    color: #BFBDB6;
+    border-bottom: 1px solid #4C566A;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem !important;
+    font-weight: 500;
+    font-size: 1.25rem; /* Made date header slightly larger */
+}
+
+.history-table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #D8DEE9;
+    border-collapse: separate; 
+    border-spacing: 0;  
+    border: 1px solid #434C5E; 
+    border-radius: 8px;   
+    overflow: hidden;     
+}
+
+.history-table th,
+.history-table td {
+    padding: 0.9rem 1.1rem;
+    vertical-align: middle;
+    border-top: 1px solid #434C5E;
+    text-align: left;
+}
+
+.history-table td:first-child,
+.history-table th:first-child {
+    border-left: none; 
+}
+
+.history-table td:last-child,
+.history-table th:last-child {
+    border-right: none; 
+}
+
+
+.history-table thead th {
+    background-color: #3B4252;
+    color: #ECEFF4;
+    font-weight: 600;
+    border-bottom: 2px solid #4C566A;
+    border-top: none;
+}
+
+/* Remove top border for the first row in tbody if thead exists */
+.history-table thead + tbody tr:first-child td {
+    border-top: none;
+}
+
+
+.history-table tbody tr:nth-of-type(odd) {
+    background-color: rgba(59, 66, 82, 0.15); /* Subtle odd row striping */
+}
+
+.history-table tbody tr:hover {
+    background-color: rgba(76, 86, 106, 0.35);
+}
+
+.history-table td a {
+    color: #88C0D0;
+    font-weight: 500;
+    text-decoration: none; /* Removed default underline */
+}
+
+.history-table td a:hover {
+    color: #A3D4E4;
+    text-decoration: underline; /* Underline on hover */
+}
+
+.custom-badge { /* Applied to sentiment badges */
+    padding: 0.45em 0.75em;
+    font-size: 0.875em;
+    font-weight: 600;
+    border-radius: 0.375rem; /* Slightly more rounded badge */
+}
+
+/* Ensuring Bootstrap default badge colors have good text contrast */
+.badge.bg-success { color: #ffffff; }
+.badge.bg-danger { color: #ffffff; }
+.badge.bg-secondary { color: #ffffff; }
+.badge.bg-dark { color: #ffffff; }
+
+
+.no-history-message {
+    color: #A3B1C2;
+    font-size: 1.1rem;
+    padding: 2rem 0;
+    text-align: center;
+}
+
+/* === Insight Page (user.html) Specific Styles === */
+
+
+.custom-dark-alert {
+    background-color: #2E3440; 
+    border: 1px solid #4C566A;
+    color: #D8DEE9;
+    border-radius: 0.375rem; 
+}
+.custom-dark-alert h5,
+.custom-dark-alert h5 strong {
+    color: #ECEFF4; 
+}
+.custom-dark-alert p {
+    color: #D8DEE9;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+.custom-dark-alert a {
+    color: #88C0D0; 
+    font-weight: 500;
+}
+.custom-dark-alert a:hover {
+    color: #A3D4E4;
+}
+
+/* Insight Page Filter Form Styling */
+.insight-filter-form {
+    background-color: #2E3440; 
+    border: 1px solid #4C566A;
+    padding: 1.5rem; 
+    border-radius: 0.5rem; 
+    margin-bottom: 2rem !important; 
+}
+
+.insight-filter-form .form-label {
+    color: #D8DEE9;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.insight-filter-form .form-control {
+    background-color: #3B4252;
+    border: 1px solid #4C566A;
+    color: #ECEFF4;
+    border-radius: 0.375rem;
+}
+/* Specific styling for select elements to show dropdown arrow correctly */
+.insight-filter-form .form-select {
+    background-color: #3B4252;
+    border: 1px solid #4C566A;
+    color: #ECEFF4;
+    border-radius: 0.375rem;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23D8DEE9' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+
+
+.insight-filter-form .form-control:focus,
+.insight-filter-form .form-select:focus {
+    background-color: #434C5E;
+    border-color: #88C0D0; /* Nord accent blue */
+    color: #ECEFF4;
+    box-shadow: 0 0 0 0.25rem rgba(136, 192, 208, 0.25);
+}
+
+/* Filter Results Title */
+.filter-results-title {
+    color: #ECEFF4;
+    font-weight: 500;
+    margin-top: 1.5rem; /* Space above this title if it appears */
+}
+
+/* Section Divider Title (e.g., User Statistics) */
+.section-divider-title {
+    color: #ECEFF4;
+    font-weight: 600;
+    border-top: 1px solid #4C566A;
+    padding-top: 1.5rem;
+    margin-top: 2rem;
+}
+
+
+/* Chart Card Styling */
+.insight-chart-card.card {
+    background-color: #2E3440; 
+    border: 1px solid #4C566A;
+    color: #D8DEE9; 
+    margin-bottom: 1.5rem !important; 
+}
+
+.insight-chart-card .card-title {
+    color: #ECEFF4; 
+    font-weight: 500;
+    margin-bottom: 1rem; 
+}
+
+/* Ensure Chart.js canvas is responsive and clear */
+.insight-chart-card canvas {
+    background-color: transparent; 
+    max-height: 350px !important; 
+    width: 100% !important;
+}
+
+/* === Share Page (share.html) Styles === */
+.share-container-card {
+    background-color: #2E3440;
+    border: 1px solid #4C566A;
+    border-radius: 10px;
+    padding: 25px 30px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    color: #D8DEE9;
+    margin-bottom: 3rem;
+}
+
+.share-title {
+    color: #ECEFF4;
+    font-weight: 600;
+    margin-bottom: 0.75rem !important;
+}
+
+.share-subtitle {
+    color: #A3B1C2;
+    font-size: 1rem;
+    margin-bottom: 2.5rem !important;
+}
+
+.custom-dark-card {
+    background-color: #1E1E1E; 
+    border: 1px solid #333333;
+    color: #D8DEE9;
+    border-radius: 10px; 
+}
+.custom-dark-card .card-title {
+    color: #ECEFF4;
+    font-weight: 500; 
+}
+.custom-dark-card .card-text strong {
+    color: #E0E0E0; 
+}
+.custom-dark-card .card-text.text-muted { 
+    color: #A0A0A0 !important; 
+    font-size: 0.9rem;
+}
+.custom-dark-card .btn-outline-primary {
+    color: #88C0D0; /* Nord accent blue */
+    border-color: #88C0D0;
+}
+.custom-dark-card .btn-outline-primary:hover {
+    background-color: #88C0D0;
+    color: #2E3440; /* Dark text on hover */
+}
+
+.no-shares-message {
+    color: #A3B1C2;
+    font-size: 1.1rem;
+    padding: 2rem 0;
+    text-align: center;
+}
+
+/* === Dark Theme for Share Post Modal === */
+.custom-dark-modal .modal-content {
+    background-color: #2E3440; /* Modal background */
+    color: #D8DEE9;            /* Default text color in modal */
+    border: 1px solid #4C566A;
+    border-radius: 0.5rem;     /* Bootstrap's default modal radius */
+}
+
+.custom-dark-modal .modal-header {
+    border-bottom: 1px solid #4C566A; /* Separator line */
+}
+.custom-dark-modal .modal-header .modal-title {
+    color: #ECEFF4; /* Modal title color */
+}
+
+.custom-dark-modal .modal-body {
+    padding: 1.5rem;
+}
+.custom-dark-modal .modal-step h5,
+.custom-dark-modal .modal-step h6 {
+    color: #E0E0E0; /* Step titles */
+    margin-bottom: 1rem;
+}
+
+.custom-dark-modal .form-select,
+.custom-dark-modal .form-control { /* General styling for form inputs in modal */
+    background-color: #3B4252;
+    border: 1px solid #4C566A;
+    color: #ECEFF4;
+}
+.custom-dark-modal .form-select { /* Specific for select dropdown arrow */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23D8DEE9' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+
+.custom-dark-modal .form-select:focus,
+.custom-dark-modal .form-control:focus {
+    background-color: #434C5E;
+    border-color: #88C0D0; 
+    color: #ECEFF4;
+    box-shadow: 0 0 0 0.25rem rgba(136, 192, 208, 0.25);
+}
+
+.custom-dark-modal .modal-footer {
+    border-top: 1px solid #4C566A; 
+    padding: 1rem;
+}
+
+/* Modal button styling - Bootstrap defaults might be okay, but can customize */
+.custom-dark-modal .modal-footer .btn-secondary,
+.custom-dark-modal .modal-footer .btn-outline-secondary {
+    background-color: #4C566A;
+    border-color: #4C566A;
+    color: #ECEFF4;
+}
+.custom-dark-modal .modal-footer .btn-secondary:hover,
+.custom-dark-modal .modal-footer .btn-outline-secondary:hover {
+    background-color: #5E81AC;
+    border-color: #5E81AC;
+}
+
+/* === Share Specific Post Page (share_post.html) Styles === */
+
+.share-post-details-card {
+    background-color: #2E3440; 
+    border: 1px solid #4C566A;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    color: #D8DEE9;   
+}
+
+.share-post-details-card .card-title-custom { 
+    color: #ECEFF4;
+    font-weight: 600;
+}
+
+.share-post-details-card .post-title-to-share { 
+    color: #A3B1C2; 
+    font-size: 1.1rem;
+    margin-bottom: 2rem !important; 
+}
+
+.share-post-details-card .form-label {
+    color: #D8DEE9;
+    margin-bottom: 0.6rem;
+    font-weight: 500;
+}
+
+.share-post-details-card .form-select, 
+.share-post-details-card .form-control { 
+    background-color: #3B4252;
+    border: 1px solid #4C566A;
+    color: #ECEFF4;
+}
+
+.share-post-details-card .form-select[multiple] {
+    padding: 0.5rem; 
+    background-image: none; 
+    min-height: 150px;
+}
+
+
+.share-post-details-card .form-select:focus,
+.share-post-details-card .form-control:focus {
+    background-color: #434C5E;
+    border-color: #88C0D0; 
+    color: #ECEFF4;
+    box-shadow: 0 0 0 0.25rem rgba(136, 192, 208, 0.25);
+}
+
+.share-post-details-card .form-text.text-muted {
+    color: #A3B1C2 !important; 
+    font-size: 0.85rem;
+}
+
+/* === Authentication Page Card Styles (for register.html, login.html) === */
+/* This style will apply to the card container for login/register forms */
+
+.auth-card {
+    background-color: #2E3440;
+    border: 1px solid #4C566A;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+    color: #D8DEE9;
+}
+
+.auth-card .auth-card-title {
+    color: #ECEFF4;
+    font-weight: 600;
+    font-size: 1.75rem;
+}
+
+.auth-card .auth-card-subtitle {
+    color: #A3B1C2;
+    font-size: 0.95rem;
+    margin-bottom: 2rem !important;
+}
+
+.auth-card .form-label {
+    color: #D8DEE9;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.auth-card .form-check-label { /* Added style for "Remember me" label */
+    color: #D8DEE9;
+    font-size: 0.9rem;
+}
+
+
+.auth-card .form-control {
+    background-color: #3B4252;
+    border: 1px solid #4C566A;
+    color: #ECEFF4;
+    border-radius: 0.375rem;
+    padding: 0.85rem 1.1rem;
+}
+
+.auth-card .form-control::placeholder {
+    color: #A3B1C2;
+    opacity: 0.8;
+}
+
+.auth-card .form-control:focus {
+    background-color: #434C5E;
+    border-color: #88C0D0;
+    color: #ECEFF4;
+    box-shadow: 0 0 0 0.25rem rgba(136, 192, 208, 0.25);
+}
+
+.auth-card .invalid-feedback.d-block {
+    color: #BF616A;
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+}
+
+.auth-card .btn-primary {
+    background-color: #5E81AC;
+    border-color: #5E81AC;
+    color: #ECEFF4;
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+.auth-card .btn-primary:hover {
+    background-color: #81A1C1;
+    border-color: #81A1C1;
+}
+
+.auth-card .auth-card-footer-link p {
+    color: #A3B1C2;
+    font-size: 0.9rem;
+}
+
+.auth-card .auth-card-footer-link a,
+.auth-card .auth-card-minor-link { /* Added .auth-card-minor-link for "Forgot password?" */
+    color: #88C0D0;
+    font-weight: 500;
+    font-size: 0.85rem; /* Made minor links slightly smaller */
+}
+
+.auth-card .auth-card-footer-link a:hover,
+.auth-card .auth-card-minor-link:hover {
+    color: #A3D4E4;
+    text-decoration: underline;
+}
+
+.reveal-on-scroll.delay-100ms { transition-delay: 0.1s; }
+.reveal-on-scroll.delay-200ms { transition-delay: 0.2s; }
+.reveal-on-scroll.delay-300ms { transition-delay: 0.3s; }
+.reveal-on-scroll.delay-400ms { transition-delay: 0.4s; } /* Added for consistency if you have more items */
