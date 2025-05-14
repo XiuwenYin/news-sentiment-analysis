@@ -257,6 +257,9 @@ def post_detail(post_id):
 @login_required
 def user(username):
     user = db.first_or_404(sa.select(User).where(User.username == username))
+    #Hide age and gender after the first input
+    show_personal_inputs = user.age is None or user.gender is None
+    
     form = FilterForm()
     age_group = None
     gender_filter = None
@@ -350,7 +353,8 @@ def user(username):
         sentiment_counter=sentiment_counter,
         category_distribution=category_distribution or {},
         category_labels=list(category_distribution.keys()) if category_distribution else [],
-        category_values=list(category_distribution.values()) if category_distribution else []
+        category_values=list(category_distribution.values()) if category_distribution else [],
+        show_personal_inputs = user.age is None or user.gender is None
     )
 
 @app.route('/analysis', methods=['GET', 'POST'])

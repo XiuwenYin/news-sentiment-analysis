@@ -27,27 +27,30 @@
             <p><strong>Try it now and uncover your unique news world! 💥🗞️</strong></p>
         </div>
 
-        <form method="POST" class="mb-4 p-4 rounded insight-filter-form"> {# Added 'insight-filter-form' and padding/rounded #}
+        <form method="POST" class="mb-4 p-4 rounded insight-filter-form">
             {{ form.hidden_tag() }}
-            <div class="row gy-3"> {# Added gy-3 for vertical spacing between rows on small screens #}
+            <div class="row gy-3">
+
+                {% if show_personal_inputs %}
                 <div class="col-md-3">
-                    <label class="form-label">Age</label> {# Added form-label class #}
+                    <label class="form-label">Age</label>
                     <input name="age" type="number" class="form-control" value="{{ user.age or '' }}">
                 </div>
 
                 <div class="col-md-3">
-                    <label class="form-label">Gender</label> {# Added form-label class #}
-                    <select name="gender" class="form-control form-select"> {# Added form-select for Bootstrap styling #}
+                    <label class="form-label">Gender</label>
+                    <select name="gender" class="form-control form-select">
                         <option value="">Select</option>
                         <option value="Male" {% if user.gender=='Male' %}selected{% endif %}>Male</option>
                         <option value="Female" {% if user.gender=='Female' %}selected{% endif %}>Female</option>
                         <option value="Other" {% if user.gender=='Other' %}selected{% endif %}>Other</option>
                     </select>
                 </div>
+                {% endif %}
 
                 <div class="col-md-3">
-                    <label class="form-label">Filter by Gender</label> {# Added form-label class #}
-                    <select name="gender_filter" class="form-control form-select"> {# Added form-select #}
+                    <label class="form-label">Filter by Gender</label>
+                    <select name="gender_filter" class="form-control form-select">
                         <option value="">None</option>
                         <option value="Male" {% if gender_filter=='Male' %}selected{% endif %}>Male</option>
                         <option value="Female" {% if gender_filter=='Female' %}selected{% endif %}>Female</option>
@@ -56,8 +59,8 @@
                 </div>
 
                 <div class="col-md-3">
-                    <label class="form-label">Filter by Age Group</label> {# Added form-label class #}
-                    <select name="age_group" class="form-control form-select"> {# Added form-select #}
+                    <label class="form-label">Filter by Age Group</label>
+                    <select name="age_group" class="form-control form-select">
                         <option value="">None</option>
                         <option value="20-30" {% if age_group=='20-30' %}selected{% endif %}>20–30</option>
                         <option value="30-40" {% if age_group=='30-40' %}selected{% endif %}>30–40</option>
@@ -68,19 +71,22 @@
                 </div>
             </div>
 
-            <div class="mt-4 text-center"> {# Changed mt-3 to mt-4 and centered button #}
-                <button type="submit" class="btn btn-primary btn-lg">Apply Filters</button> {# Made button larger #}
+            <div class="mt-4 text-center">
+                <button type="submit" class="btn btn-primary btn-lg">Apply Filters</button>
             </div>
         </form>
 
         {% if gender_filter %}
-        <h5 class="filter-results-title mb-3">News Category Distribution for Gender: {{ gender_filter }}</h5> {# Added class #}
+        <h5 class="filter-results-title mb-3">News Category Distribution for Gender: {{ gender_filter }}</h5> {# Added
+        class #}
         {% elif age_group %}
-        <h5 class="filter-results-title mb-3">News Category Distribution for Age Group: {{ age_group }}</h5> {# Added class #}
+        <h5 class="filter-results-title mb-3">News Category Distribution for Age Group: {{ age_group }}</h5> {# Added
+        class #}
         {% endif %}
 
         {% if category_distribution %}
-        <div id="category-section" class="chart-section card insight-chart-card shadow-sm rounded mb-4"> {# Added 'insight-chart-card' #}
+        <div id="category-section" class="chart-section card insight-chart-card shadow-sm rounded mb-4"> {# Added
+            'insight-chart-card' #}
             <div class="card-body">
                 <h5 class="card-title text-center">Category Distribution (Bar Chart)</h5>
                 <canvas id="categoryChart" style="max-height: 350px;"></canvas> {# Increased max-height #}
@@ -88,8 +94,9 @@
         </div>
         {% endif %}
 
-        <h2 id="statistics-section" class="mb-4 text-center section-divider-title">📊 User Statistics</h2> {# Added class #}
-        
+        <h2 id="statistics-section" class="mb-4 text-center section-divider-title">📊 User Statistics</h2> {# Added
+        class #}
+
         {# Changed alert-light to a custom class 'custom-dark-alert' #}
         <div class="custom-dark-alert border rounded p-4 mb-4 shadow-sm">
             <h5><strong>Your Mood, Your Moments — Visualized 💬</strong></h5>
@@ -108,22 +115,25 @@
             </p>
             <p><strong>Come and click! <a href="#top-feature">See Your Emotional Footprint 🔍</a></strong></p>
         </div>
-        
-        <div id="trend-section" class="chart-section card insight-chart-card shadow-sm rounded mb-4"> {# Added 'insight-chart-card' #}
+
+        <div id="trend-section" class="chart-section card insight-chart-card shadow-sm rounded mb-4"> {# Added
+            'insight-chart-card' #}
             <div class="card-body">
                 <h5 class="card-title text-center">Sentiment Trend (Last 7 Days)</h5>
                 <canvas id="trendChart" style="max-height: 350px;"></canvas> {# Increased max-height #}
             </div>
         </div>
-        
-        <div id="distribution-section" class="chart-section card insight-chart-card shadow-sm rounded mb-4"> {# Added 'insight-chart-card' #}
+
+        <div id="distribution-section" class="chart-section card insight-chart-card shadow-sm rounded mb-4"> {# Added
+            'insight-chart-card' #}
             <div class="card-body">
                 <h5 class="card-title text-center">Overall Sentiment Distribution</h5>
                 <canvas id="distributionChart" style="max-height: 350px;"></canvas> {# Increased max-height #}
             </div>
         </div>
-        
-        <div id="activity-section" class="chart-section card insight-chart-card shadow-sm rounded mb-4"> {# Added 'insight-chart-card' #}
+
+        <div id="activity-section" class="chart-section card insight-chart-card shadow-sm rounded mb-4"> {# Added
+            'insight-chart-card' #}
             <div class="card-body">
                 <h5 class="card-title text-center">Daily Post Activity</h5>
                 <canvas id="activityChart" style="max-height: 350px;"></canvas> {# Increased max-height #}
@@ -165,7 +175,7 @@
                 datasets: [{
                     label: "News Category Count",
                     data: categoryValues,
-                    backgroundColor: "rgba(0, 122, 255, 0.6)", 
+                    backgroundColor: "rgba(0, 122, 255, 0.6)",
                     borderColor: "rgba(0, 122, 255, 1)",
                     borderWidth: 1
                 }]
@@ -259,7 +269,7 @@
                 datasets: [{
                     label: 'Posts per Day',
                     data: postCounts,
-                    backgroundColor: 'rgba(0, 122, 255, 0.6)', 
+                    backgroundColor: 'rgba(0, 122, 255, 0.6)',
                     borderColor: 'rgba(0, 122, 255, 1)',
                     borderWidth: 1
                 }]
@@ -293,8 +303,8 @@
 
         // Show the first section (category distribution) if data exists
         const categorySection = document.getElementById('category-section');
-        if (categorySection) { 
-             categorySection.style.display = 'block';
+        if (categorySection) {
+            categorySection.style.display = 'block';
         } else {
         }
     });
@@ -312,7 +322,7 @@
         if (sectionId !== 'category-section' && statsHeader) {
             statsHeader.scrollIntoView({ behavior: "smooth", block: "start" });
         } else if (sectionId === 'category-section' && document.getElementById('top-feature')) {
-             document.getElementById('top-feature').scrollIntoView({ behavior: "smooth", block: "start" });
+            document.getElementById('top-feature').scrollIntoView({ behavior: "smooth", block: "start" });
         }
     }
 </script>
