@@ -250,13 +250,8 @@ def history():
 @app.route("/post/<int:post_id>")
 @login_required
 def post_detail(post_id):
-    # Query the post by ID
     post = Post.query.get_or_404(post_id)
-    char_count = len(post.body)
-    sentence_count = len([s for s in re.split(r'[.!?]', post.body) if s.strip()])
-    return render_template("visualize.html", content=post.body, result=post.sentiment,
-                           char_count=char_count, sentence_count=sentence_count)
-
+    return render_template("analysis.html", content=post.body)
 
 @app.route('/user/<username>', methods=["GET", "POST"])
 @login_required
@@ -357,16 +352,6 @@ def user(username):
         category_labels=list(category_distribution.keys()) if category_distribution else [],
         category_values=list(category_distribution.values()) if category_distribution else []
     )
-
-                           
-
-
-
-@app.route('/post/<int:post_id>')
-@login_required
-def post(post_id):
-    post = db.first_or_404(sa.select(Post).where(Post.id == post_id))
-    return render_template('post.html', post=post)
 
 @app.route('/analysis', methods=['GET', 'POST'])
 def analysis():
