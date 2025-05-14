@@ -138,6 +138,7 @@ def upload():
         post = Post(title=post_title, body=news_content, author=current_user)
         post.sentiment = sentiment
         post.category = category_result 
+        post.emotions = {e['label']: round(e['score'], 3) for e in emotion_scores_sorted} 
         db.session.add(post)
         db.session.commit()
 

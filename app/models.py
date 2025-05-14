@@ -66,8 +66,9 @@ class Post(db.Model):
     sentiment: so.Mapped[str] = so.mapped_column(sa.String(64), nullable=True)
     #label: so.Mapped[str] = so.mapped_column(sa.String(64), nullable=True)
     author: so.Mapped[User] = so.relationship(back_populates='posts')
-    #新闻类别
+    # News category and sentiment score
     category: so.Mapped[Optional[str]] = so.mapped_column(sa.String(64), nullable=True)
+    emotions: so.Mapped[Optional[dict]] = so.mapped_column(sa.JSON, nullable=True) 
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
