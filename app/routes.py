@@ -311,6 +311,11 @@ def user(username):
         Post.user_id == current_user.id,
         Post.timestamp >= seven_days_ago
     ).all()
+    
+    # 用户自己的新闻类别统计
+    user_category_counter = Counter(post.category for post in posts if post.category)
+    user_category_labels = list(user_category_counter.keys())
+    user_category_values = list(user_category_counter.values())
 
     label_counts = {
         'Negative': sum(1 for post in posts if post.sentiment == 'Negative'),
@@ -354,7 +359,9 @@ def user(username):
         category_distribution=category_distribution or {},
         category_labels=list(category_distribution.keys()) if category_distribution else [],
         category_values=list(category_distribution.values()) if category_distribution else [],
-        show_personal_inputs = user.age is None or user.gender is None
+        show_personal_inputs=show_personal_inputs,
+        user_category_labels=user_category_labels,
+        user_category_values=user_category_values
     )
 
 @app.route('/analysis', methods=['GET', 'POST'])

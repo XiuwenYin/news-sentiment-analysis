@@ -10,6 +10,9 @@
         <a href="javascript:void(0);" class="nav-link" onclick="showSection('distribution-section')">Overall Sentiment
             Distribution</a>
         <a href="javascript:void(0);" class="nav-link" onclick="showSection('activity-section')">Daily Post Activity</a>
+        <a href="javascript:void(0);" class="nav-link" onclick="showSection('own-category-section')">Your News
+            Categories</a>
+
     </div>
 
     <div class="content insight-content"> {# Added 'insight-content' class #}
@@ -111,7 +114,11 @@
 
                 📅 <strong>Daily Post Activity</strong><br>
                 Discover your personal posting habits. Find out which days you're most active and how your engagement
-                varies over time.
+                varies over time.<br><br>
+
+                📚 <strong> Own News Category Distribution</strong><br>
+                Discover your potential interest in news categories, find the most frequently uploaded news category,
+                and see what your favorite news is!
             </p>
             <p><strong>Come and click! <a href="#top-feature">See Your Emotional Footprint 🔍</a></strong></p>
         </div>
@@ -139,6 +146,14 @@
                 <canvas id="activityChart" style="max-height: 350px;"></canvas> {# Increased max-height #}
             </div>
         </div>
+
+        <div id="own-category-section" class="chart-section card insight-chart-card shadow-sm rounded mb-4"> {# Added
+            'insight-chart-card' #}
+            <div class="card-body">
+                <h5 class="card-title text-center">Own News Category Distribution</h5>
+                <canvas id="userCategoryChart" style="max-height: 350px;"></canvas> {# Increased max-height #}
+            </div>
+        </div>
     </div> {# End of .content .insight-content #}
 </section>
 {% endblock %}
@@ -157,6 +172,8 @@
     const sentimentCounter = {{ sentiment_counter| tojson }};
     const categoryLabels = {{ category_labels| tojson }};
     const categoryValues = {{ category_values| tojson }};
+    const userCategoryLabels = {{ user_category_labels | tojson }};
+    const userCategoryValues = {{ user_category_values | tojson }};
 
     // Helper function to get Chart.js default font color for dark theme
     function getChartFontColor() {
@@ -269,6 +286,41 @@
                 datasets: [{
                     label: 'Posts per Day',
                     data: postCounts,
+                    backgroundColor: 'rgba(0, 122, 255, 0.6)',
+                    borderColor: 'rgba(0, 122, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: getChartFontColor() },
+                        grid: { color: getChartGridColor() }
+                    },
+                    x: {
+                        ticks: { color: getChartFontColor() },
+                        grid: { color: getChartGridColor() }
+                    }
+                },
+                plugins: {
+                    legend: { labels: { color: getChartFontColor() } }
+                }
+            }
+        });
+    }
+
+    // Own News Category Distribution Chart
+    if (document.getElementById("userCategoryChart") && userCategoryLabels.length > 0) {
+        new Chart(document.getElementById("userCategoryChart"), {
+            type: "bar",
+            data: {
+                labels: userCategoryLabels,
+                datasets: [{
+                    label: "Your Posts by Category",
+                    data: userCategoryValues,
                     backgroundColor: 'rgba(0, 122, 255, 0.6)',
                     borderColor: 'rgba(0, 122, 255, 1)',
                     borderWidth: 1
