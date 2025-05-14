@@ -13,28 +13,39 @@
       <div class="card upload-form-card"> {# Added 'upload-form-card' class for specific styling #}
         <div class="card-body p-4 p-md-5"> {# Add more padding #}
 
-          <h2 class="text-center mb-4 card-title-custom">Upload News Content to Analyze Sentiment</h2> {# Added 'card-title-custom' #}
+          <h2 class="text-center mb-4 card-title-custom">Upload News Content to Analyze Sentiment</h2> {# Added
+          'card-title-custom' #}
 
           <form method="POST" action="{{ url_for('upload') }}">
             {{ form.hidden_tag() }}
 
             <div class="mb-3"> {# Use Bootstrap's margin bottom class for spacing #}
               {{ form.post_title.label(class="form-label") }} {# Add 'form-label' class for Bootstrap styling #}
-              {{ form.post_title(class="form-control form-control-lg", placeholder="Enter the news title") }} {# Add 'form-control-lg' and placeholder #}
+              {{ form.post_title(class="form-control form-control-lg", placeholder="Enter the news title") }} {# Add
+              'form-control-lg' and placeholder #}
               {% if form.post_title.errors %}
-                <div class="invalid-feedback d-block">
-                    {% for error in form.post_title.errors %}<span>{{ error }}</span>{% endfor %}
-                </div>
+              <div class="invalid-feedback d-block">
+                {% for error in form.post_title.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
               {% endif %}
             </div>
 
             <div class="mb-3"> {# Use Bootstrap's margin bottom class for spacing #}
               {{ form.news_content.label(class="form-label") }} {# Add 'form-label' class #}
-              {{ form.news_content(class="form-control form-control-lg", rows="10", placeholder="Paste or type news content here...") }} {# Add 'form-control-lg', increase rows, add placeholder #}
+              {{ form.news_content(class="form-control form-control-lg", id="news_content",rows="10", placeholder="Paste
+              or type news
+              content here...") }} {# Add 'form-control-lg', increase rows, add placeholder #}
+
+              <!--Word count function-->
+              <div class="text-white mt-2">
+                <span id="charCount">Characters: 0</span> |
+                <span id="sentenceCount">Sentences: 0</span>
+              </div>
+
               {% if form.news_content.errors %}
-                <div class="invalid-feedback d-block">
-                    {% for error in form.news_content.errors %}<span>{{ error }}</span>{% endfor %}
-                </div>
+              <div class="invalid-feedback d-block">
+                {% for error in form.news_content.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
               {% endif %}
             </div>
 
@@ -49,4 +60,27 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const textarea = document.getElementById("news_content");
+    const charCountEl = document.getElementById("charCount");
+    const sentenceCountEl = document.getElementById("sentenceCount");
+
+    function updateCounts() {
+      const text = textarea.value.replace(/\r\n|\r|\n/g, '\n');
+      const charCount = text.length;
+      const sentenceCount = (text.match(/[.!?]+/g) || []).length;
+
+      charCountEl.textContent = `Characters: ${charCount}`;
+      sentenceCountEl.textContent = `Sentences: ${sentenceCount}`;
+    }
+
+    if (textarea) {
+      updateCounts(); // 初始化
+      textarea.addEventListener("input", updateCounts);
+    }
+  });
+</script>
+
 {% endblock %}
