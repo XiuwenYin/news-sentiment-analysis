@@ -404,46 +404,6 @@ def analysis():
     # logout_user()
     # return '', 204
 
-# News Sentiment Analysis Application Routes
-@app.route('/stats')
-@login_required
-def stats():
-    # Query the current user's posts from the last 7 days
-    seven_days_ago = datetime.utcnow() - timedelta(days=7)
-    posts = Post.query.filter(
-        Post.user_id == current_user.id,
-        Post.timestamp >= seven_days_ago
-    ).all()
-
-    # Categorize by date and sentiment
-    daily_sentiment = {}
-    sentiment_counter = Counter()
-    daily_post_count = Counter()
-
-    for post in posts:
-        date_str = post.timestamp.strftime('%Y-%m-%d')
-        daily_post_count[date_str] += 1
-        sentiment_counter[post.sentiment] += 1
-        if date_str not in daily_sentiment:
-            daily_sentiment[date_str] = Counter()
-        daily_sentiment[date_str][post.sentiment] += 1
-
-    # Construct sentiment trend data
-    dates = sorted(daily_sentiment.keys())
-    positive = [daily_sentiment[d].get('Positive', 0) for d in dates]
-    neutral = [daily_sentiment[d].get('Neutral', 0) for d in dates]
-    negative = [daily_sentiment[d].get('Negative', 0) for d in dates]
-    post_counts = [daily_post_count[d] for d in dates]
-
-    return render_template('stats.html',
-                           dates=dates,
-                           positive=positive,
-                           neutral=neutral,
-                           negative=negative,
-                           sentiment_counter=sentiment_counter,
-                           post_counts=post_counts)
-
-
 # Notification Module
 @app.route('/notifications')
 @login_required
