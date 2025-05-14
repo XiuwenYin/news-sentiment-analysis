@@ -157,22 +157,35 @@ def upload():
 @app.route("/share")
 @login_required
 def share():
-    # Query the shared posts explicitly
+    # Query shared posts
     shared_posts = db.session.scalars(
         sa.select(Post).join(post_shares).where(post_shares.c.user_id == current_user.id)
     ).all()
+
+    enriched_posts = []
+    for post in shared_posts:
+        # Get emotion scores dynamically
+        emotion_scores = emotion_classifier(post.body, truncation=True, max_length=512)[0]
+        sorted_emotions = sorted(emotion_scores, key=lambda x: x["score"], reverse=True)
+
+        enriched_posts.append({
+            "post": post,
+            "emotions": sorted_emotions,
+            "sentiment": post.sentiment,
+            "category": post.category,
+        })
+
     user_posts = Post.query.filter_by(user_id=current_user.id).all()
     other_users = User.query.filter(User.id != current_user.id).all()
     form = SharePostForm()
 
     return render_template(
         "share.html", 
-        shared_posts=shared_posts, 
+        enriched_posts=enriched_posts,  # pass enriched data
         user_posts=user_posts, 
         other_users=other_users,
         form=form,
-        )
-
+    )
 
 @app.route('/share_post/<int:post_id>', methods=['GET', 'POST'])
 @login_required
