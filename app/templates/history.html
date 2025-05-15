@@ -1,62 +1,83 @@
 {% extends "base.html" %}
-{% block content %}
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Your Analysis History</h2>
 
-    {% for date, posts in grouped_posts.items() %}
-    <h4 class="mt-4">{{ date }}</h4>
-    <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th scope="col">Time</th>
-                <th scope="col">News Title</th>
-                <th scope="col">Sentiment</th>
-                <th scope="col">Details</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for post in posts %}
-            <tr>
-                <td>{{ post.timestamp.strftime('%H:%M:%S') }}</td>
-                <td><a href="{{ url_for('history.post_detail', post_id=post.id) }}">{{ post.title }}</a></td>
-                <td>
-                    {% if post.sentiment == 'Positive' %}
-                    <span class="badge bg-success">Positive</span>
-                    {% elif post.sentiment == 'Negative' %}
-                    <span class="badge bg-danger">Negative</span>
-                    {% elif post.sentiment == 'Neutral' %}
-                    <span class="badge bg-secondary">Neutral</span>
-                    {% else %}
-                    <span class="badge bg-dark">None</span>
-                    {% endif %}
-                </td>
-                <td>
-                    <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#details-{{ post.id }}">
-                        View
-                    </button>
-                </td>
-            </tr>
-            <tr class="collapse" id="details-{{ post.id }}">
-                <td colspan="4">
-                    <div class="p-3 bg-light">
-                        <p><strong>Category:</strong> {{ post.category or "N/A" }}</p>
-                        <p><strong>Emotions:</strong></p>
-                        {% if post.emotions %}
-                        <ul>
-                            {% for emotion, score in post.emotions.items() %}
-                            <li>{{ emotion }}: {{ '%.3f'|format(score) }}</li>
-                            {% endfor %}
-                        </ul>
-                        {% else %}
-                        <p class="text-muted">No emotion data available.</p>
-                        {% endif %}
+{% block title %}Analysis History{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-11 col-lg-10"> {# Wider column for table content #}
+
+            <div class="history-container-card"> {# Using the same wrapper class as before #}
+
+                <h2 class="text-center mb-4 history-title">Your Analysis History</h2>
+
+                {% if grouped_posts %}
+                    {% for date, posts in grouped_posts.items() %}
+                    <div class="date-group mb-5"> {# Increased bottom margin for date groups #}
+                        <h4 class="date-header mb-3">{{ date }}</h4>
+                        <div class="table-responsive">
+                            <table class="table history-table"> {# Custom class for styling #}
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="width: 15%;">Time</th>
+                                        <th scope="col">News Title</th>
+                                        <th scope="col" style="width: 15%;">Sentiment</th>
+                                        <th scope="col" style="width: 10%;">Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for post in posts %}
+                                    <tr class="history-table-row"> {# Class for main row #}
+                                        <td>{{ post.timestamp.strftime('%H:%M:%S') }}</td>
+                                        {# CORRECTED url_for HERE #}
+                                        <td><a href="{{ url_for('history.post_detail', post_id=post.id) }}">{{ post.title }}</a></td>
+                                        <td>
+                                            {% if post.sentiment == 'Positive' %}
+                                            <span class="badge bg-success custom-badge">{{ post.sentiment }}</span>
+                                            {% elif post.sentiment == 'Negative' %}
+                                            <span class="badge bg-danger custom-badge">{{ post.sentiment }}</span>
+                                            {% elif post.sentiment == 'Neutral' %}
+                                            <span class="badge bg-secondary custom-badge">{{ post.sentiment }}</span>
+                                            {% else %}
+                                            <span class="badge bg-dark custom-badge">None</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-info view-details-btn" type="button" data-bs-toggle="collapse"
+                                                data-bs-target="#details-{{ post.id }}" aria-expanded="false" aria-controls="details-{{ post.id }}">
+                                                View
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr class="collapse history-details-row" id="details-{{ post.id }}"> {# Class for details row #}
+                                        <td colspan="4" class="p-0"> {# Remove padding from td to let inner div control it #}
+                                            <div class="history-details-content p-3">
+                                                <p><strong>Category:</strong> {{ post.category or "N/A" }}</p>
+                                                <p class="mb-1"><strong>Emotions:</strong></p>
+                                                {% if post.emotions and post.emotions is mapping and post.emotions|length > 0 %}
+                                                <ul class="list-unstyled emotions-list ps-3"> {# list-unstyled and custom class #}
+                                                    {% for emotion, score in post.emotions.items() %}
+                                                    <li><span class="emotion-label">{{ emotion }}:</span> <span class="emotion-score">{{ '%.3f'|format(score) }}</span></li>
+                                                    {% endfor %}
+                                                </ul>
+                                                {% else %}
+                                                <p class="text-muted small">No detailed emotion data available.</p>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% endfor %}
+                    {% endfor %}
+                {% else %}
+                    <p class="text-center no-history-message">You have no analysis history yet.</p>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
