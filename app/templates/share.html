@@ -4,42 +4,64 @@
 
 {% block content %}
 <div class="container mt-5 mb-5">
-    <div class="share-container-card"> 
+    <div class="share-container-card">
 
-        <h2 class="text-center mb-3 share-title">My Shared Sentiment Analyses</h2> 
-        <p class="text-center mb-5 share-subtitle">Here you can view and manage your shared sentiment results.</p> 
+        <h2 class="text-center mb-3 share-title">My Shared Sentiment Analyses</h2>
+        <p class="text-center mb-5 share-subtitle">Here you can view and manage your shared sentiment results.</p>
 
-        {% if shared_posts %}
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"> 
-            {% for post in shared_posts %}
+        {% if enriched_posts %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for item in enriched_posts %}
             <div class="col">
                 <div class="card h-100 custom-dark-card shadow-sm">
-                    <div class="card-body d-flex flex-column"> 
-                        <h5 class="card-title">{{ post.title }}</h5>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ item.post.title }}</h5>
+
+                        <p class="card-text text-muted small mb-2">{{ item.post.body[:80] }}...</p>
+
+                        <!-- Sentiment -->
                         <p class="card-text">Overall Sentiment:
-                            {% if post.sentiment == 'Positive' %}
-                            <span class="badge bg-success custom-badge ms-1">{{ post.sentiment }}</span>
-                            {% elif post.sentiment == 'Negative' %}
-                            <span class="badge bg-danger custom-badge ms-1">{{ post.sentiment }}</span>
-                            {% elif post.sentiment == 'Neutral' %}
-                            <span class="badge bg-secondary custom-badge ms-1">{{ post.sentiment }}</span>
+                            {% if item.sentiment == 'Positive' %}
+                            <span class="badge bg-success custom-badge ms-1">{{ item.sentiment }}</span>
+                            {% elif item.sentiment == 'Negative' %}
+                            <span class="badge bg-danger custom-badge ms-1">{{ item.sentiment }}</span>
+                            {% elif item.sentiment == 'Neutral' %}
+                            <span class="badge bg-secondary custom-badge ms-1">{{ item.sentiment }}</span>
                             {% else %}
                             <span class="badge bg-dark custom-badge ms-1">None</span>
                             {% endif %}
                         </p>
-                        <p class="card-text text-muted small mb-3">{{ post.body[:80] }}...</p> 
-                        <a href="{{ url_for('post_detail', post_id=post.id) }}" class="btn btn-outline-primary mt-auto align-self-start">View Detail</a> {# mt-auto to push button down, align-self-start #}
+
+                        <!-- Category -->
+                        <p class="card-text"><strong>Category:</strong> {{ item.category }}</p>
+
+                        <!-- Emotions -->
+                        <div class="card-text">
+                            <strong>Emotions:</strong>
+                            <ul class="mb-2">
+                                {% for emotion in item.emotions %}
+                                <li>{{ emotion.label }}: {{ (emotion.score * 100) | round(1) }}%</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+                        <!-- View detail -->
+                        <a href="{{ url_for('post_detail', post_id=item.post.id) }}"
+                            class="btn btn-outline-primary mt-auto align-self-start">
+                            View Detail
+                        </a>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
         {% else %}
-            <p class="text-center no-shares-message">You haven't shared any analyses yet.</p> 
+        <p class="text-center no-shares-message">You haven't shared any analyses yet.</p>
         {% endif %}
 
-        <div class="text-center mt-5 mb-4"> 
-            <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#sharePostModal">Share a New Analysis</button> {# Made button larger #}
+        <div class="text-center mt-5 mb-4">
+            <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#sharePostModal">Share a New
+                Analysis</button> {# Made button larger #}
         </div>
 
     </div> {# End of .share-container-card #}
@@ -55,7 +77,8 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="sharePostModalLabel">Share an Analysis</h5>
                     {# Ensure btn-close is visible on dark background #}
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div id="step1" class="modal-step">
@@ -64,7 +87,8 @@
                             <select name="post_id" class="form-control form-select" required>
                                 <option value="" disabled selected>Choose an analysis...</option>
                                 {% for post in user_posts %}
-                                <option value="{{ post.id }}">{{ post.title }} ({{ post.timestamp.strftime('%Y-%m-%d') }})</option>
+                                <option value="{{ post.id }}">{{ post.title }} ({{ post.timestamp.strftime('%Y-%m-%d')
+                                    }})</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -83,7 +107,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" id="prevStep" onclick="showStep(1)">Previous</button>
+                    <button type="button" class="btn btn-outline-secondary" id="prevStep"
+                        onclick="showStep(1)">Previous</button>
                     <button type="button" class="btn btn-primary" id="nextStep" onclick="showStep(2)">Next</button>
                     <button type="submit" class="btn btn-success d-none" id="submitShare">Confirm Share</button>
                 </div>
@@ -106,7 +131,7 @@
         if (step === 1) {
             step1Div.classList.remove('d-none');
             step2Div.classList.add('d-none');
-            
+
             prevButton.classList.add('d-none'); // Hide prev on step 1
             nextButton.classList.remove('d-none');
             submitButton.classList.add('d-none');
