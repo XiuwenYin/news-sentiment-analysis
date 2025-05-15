@@ -49,6 +49,12 @@ news_category_classifier = pipeline(
     top_k=1  # 只返回最可能的一个类别
 )
 
+#新闻概要器
+news_summarizer = pipeline(
+    "summarization", 
+    model="t5-small")
+
+
 @app.route("/")
 @app.route("/index")
 # @login_required
@@ -124,7 +130,9 @@ def upload():
         # counting characters and sentences
         char_count = len(news_content)
         sentence_count = len([s for s in re.split(r'[.!?]', news_content) if s.strip()])
-
+        # 新闻摘要生成
+        summary_output = news_summarizer(news_content, max_length=130, min_length=30, do_sample=False)
+        summary_text = summary_output[0]['summary_text']
          # sentiment analysis
         # emotion_scores = emotion_classifier(news_content)[0]
         emotion_scores = emotion_classifier(news_content, truncation=True, max_length=512)[0]
@@ -150,7 +158,8 @@ def upload():
                                char_count=char_count,
                                sentence_count=sentence_count,
                                emotion_scores=emotion_scores_sorted,
-                               news_category=category_result)
+                               news_category=category_result,
+                               summary=summary_text)
     return render_template("upload.html", form=form)
 
 
