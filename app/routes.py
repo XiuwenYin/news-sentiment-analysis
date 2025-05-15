@@ -49,6 +49,12 @@ news_category_classifier = pipeline(
     top_k=1  # 只返回最可能的一个类别
 )
 
+#新闻概要器
+news_summarizer = pipeline(
+    "summarization", 
+    model="t5-small")
+
+
 @app.route("/")
 @app.route("/index")
 # @login_required
@@ -116,6 +122,7 @@ def upload():
     if form.validate_on_submit():
         post_title = form.post_title.data  # ✅ 用 FlaskForm 的方式拿数
         news_content = form.news_content.data
+        news_content = news_content.replace('\r\n', '\n').replace('\r', '\n') 
         # 新闻类别识别
         result = news_category_classifier(news_content,truncation=True, max_length=512)
         category_result = result[0][0]['label']
@@ -123,7 +130,9 @@ def upload():
         # counting characters and sentences
         char_count = len(news_content)
         sentence_count = len([s for s in re.split(r'[.!?]', news_content) if s.strip()])
-
+        # 新闻摘要生成
+        summary_output = news_summarizer(news_content, max_length=130, min_length=30, do_sample=False)
+        summary_text = summary_output[0]['summary_text']
          # sentiment analysis
         # emotion_scores = emotion_classifier(news_content)[0]
         emotion_scores = emotion_classifier(news_content, truncation=True, max_length=512)[0]
@@ -150,29 +159,43 @@ def upload():
                                char_count=char_count,
                                sentence_count=sentence_count,
                                emotion_scores=emotion_scores_sorted,
-                               news_category=category_result)
+                               news_category=category_result,
+                               summary=summary_text)
     return render_template("upload.html", form=form)
 
 
 @app.route("/share")
 @login_required
 def share():
-    # Query the shared posts explicitly
+    # Query shared posts
     shared_posts = db.session.scalars(
         sa.select(Post).join(post_shares).where(post_shares.c.user_id == current_user.id)
     ).all()
+
+    enriched_posts = []
+    for post in shared_posts:
+        # Get emotion scores dynamically
+        emotion_scores = emotion_classifier(post.body, truncation=True, max_length=512)[0]
+        sorted_emotions = sorted(emotion_scores, key=lambda x: x["score"], reverse=True)
+
+        enriched_posts.append({
+            "post": post,
+            "emotions": sorted_emotions,
+            "sentiment": post.sentiment,
+            "category": post.category,
+        })
+
     user_posts = Post.query.filter_by(user_id=current_user.id).all()
     other_users = User.query.filter(User.id != current_user.id).all()
     form = SharePostForm()
 
     return render_template(
         "share.html", 
-        shared_posts=shared_posts, 
+        enriched_posts=enriched_posts,  # pass enriched data
         user_posts=user_posts, 
         other_users=other_users,
         form=form,
-        )
-
+    )
 
 @app.route('/share_post/<int:post_id>', methods=['GET', 'POST'])
 @login_required
@@ -250,18 +273,16 @@ def history():
 @app.route("/post/<int:post_id>")
 @login_required
 def post_detail(post_id):
-    # Query the post by ID
     post = Post.query.get_or_404(post_id)
-    char_count = len(post.body)
-    sentence_count = len([s for s in re.split(r'[.!?]', post.body) if s.strip()])
-    return render_template("visualize.html", content=post.body, result=post.sentiment,
-                           char_count=char_count, sentence_count=sentence_count)
-
+    return render_template("analysis.html", content=post.body)
 
 @app.route('/user/<username>', methods=["GET", "POST"])
 @login_required
 def user(username):
     user = db.first_or_404(sa.select(User).where(User.username == username))
+    #Hide age and gender after the first input
+    show_personal_inputs = user.age is None or user.gender is None
+    
     form = FilterForm()
     age_group = None
     gender_filter = None
@@ -313,6 +334,11 @@ def user(username):
         Post.user_id == current_user.id,
         Post.timestamp >= seven_days_ago
     ).all()
+    
+    # 用户自己的新闻类别统计
+    user_category_counter = Counter(post.category for post in posts if post.category)
+    user_category_labels = list(user_category_counter.keys())
+    user_category_values = list(user_category_counter.values())
 
     label_counts = {
         'Negative': sum(1 for post in posts if post.sentiment == 'Negative'),
@@ -355,18 +381,11 @@ def user(username):
         sentiment_counter=sentiment_counter,
         category_distribution=category_distribution or {},
         category_labels=list(category_distribution.keys()) if category_distribution else [],
-        category_values=list(category_distribution.values()) if category_distribution else []
+        category_values=list(category_distribution.values()) if category_distribution else [],
+        show_personal_inputs=show_personal_inputs,
+        user_category_labels=user_category_labels,
+        user_category_values=user_category_values
     )
-
-                           
-
-
-
-@app.route('/post/<int:post_id>')
-@login_required
-def post(post_id):
-    post = db.first_or_404(sa.select(Post).where(Post.id == post_id))
-    return render_template('post.html', post=post)
 
 @app.route('/analysis', methods=['GET', 'POST'])
 def analysis():
@@ -404,45 +423,6 @@ def analysis():
 # def auto_logout():
     # logout_user()
     # return '', 204
-
-# News Sentiment Analysis Application Routes
-@app.route('/stats')
-@login_required
-def stats():
-    # Query the current user's posts from the last 7 days
-    seven_days_ago = datetime.utcnow() - timedelta(days=7)
-    posts = Post.query.filter(
-        Post.user_id == current_user.id,
-        Post.timestamp >= seven_days_ago
-    ).all()
-
-    # Categorize by date and sentiment
-    daily_sentiment = {}
-    sentiment_counter = Counter()
-    daily_post_count = Counter()
-
-    for post in posts:
-        date_str = post.timestamp.strftime('%Y-%m-%d')
-        daily_post_count[date_str] += 1
-        sentiment_counter[post.sentiment] += 1
-        if date_str not in daily_sentiment:
-            daily_sentiment[date_str] = Counter()
-        daily_sentiment[date_str][post.sentiment] += 1
-
-    # Construct sentiment trend data
-    dates = sorted(daily_sentiment.keys())
-    positive = [daily_sentiment[d].get('Positive', 0) for d in dates]
-    neutral = [daily_sentiment[d].get('Neutral', 0) for d in dates]
-    negative = [daily_sentiment[d].get('Negative', 0) for d in dates]
-    post_counts = [daily_post_count[d] for d in dates]
-
-    return render_template('stats.html',
-                           dates=dates,
-                           positive=positive,
-                           neutral=neutral,
-                           negative=negative,
-                           sentiment_counter=sentiment_counter,
-                           post_counts=post_counts)
 
 
 # Notification Module

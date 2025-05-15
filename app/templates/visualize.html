@@ -4,7 +4,9 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2 class="text-center mb-4">Sentiment Analysis Result</h2>
+    <h2 class="text-center mb-4 text-white" style="text-shadow: 2px 2px 6px black;">
+        Sentiment Analysis Result
+    </h2>
 
     <div class="card shadow-sm">
         <div class="card-body">
@@ -22,6 +24,10 @@
             <!-- Add news category -->
             <h5 class="card-title">Detected News Category:</h5>
             <p class="card-text text-info fw-bold">{{ news_category }}</p>
+
+            <!-- Add news summary -->
+            <h5 class="card-title">News Summary:</h5>
+            <p class="card-text text-info fw-bold">{{ summary }}</p>
 
             {% if emotion_scores %}
             <hr>
@@ -63,8 +69,8 @@
         </div>
     </div>
 
-    <div class="text-center mt-4">
-        <a href="{{ url_for('upload') }}" class="btn btn-primary">Analyze Another</a>
+    <div class="text-center mt-4 pt-2 mb-5">
+        <a href="{{ url_for('upload') }}" class="btn btn-primary me-2">Analyze Another</a>
         <a href="{{ url_for('share') }}" class="btn btn-outline-secondary">Go to My Share</a>
     </div>
 </div>
