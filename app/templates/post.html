@@ -26,5 +26,5 @@
 </p>
 
 <!-- Button to navigate back to the author's posts -->
-<a href="{{ url_for('user', username=post.author.username) }}" class="btn btn-primary">Back to User's Posts</a>
+<a href="{{ url_for('main.user', username=post.author.username) }}" class="btn btn-primary">Back to User's Posts</a>
 {% endblock %}

@@ -16,7 +16,7 @@
           <h2 class="text-center mb-4 card-title-custom">Upload News Content to Analyze Sentiment</h2> {# Added
           'card-title-custom' #}
 
-          <form method="POST" action="{{ url_for('upload') }}">
+          <form method="POST" action="{{ url_for('main.upload') }}">
             {{ form.hidden_tag() }}
 
             <div class="mb-3"> {# Use Bootstrap's margin bottom class for spacing #}

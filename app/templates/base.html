@@ -12,7 +12,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand text-white" href="{{ url_for('index') }}">News Sentiment</a>
+            <a class="navbar-brand text-white" href="{{ url_for('main.index') }}">News Sentiment</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -20,36 +20,36 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ url_for('index') }}">Homepage</a>
+                        <a class="nav-link text-white" href="{{ url_for('main.index') }}">Homepage</a>
                     </li>
 
                     {% if current_user.is_authenticated %}
                     <!-- Upload/Input dropdown -->
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ url_for('upload') }}">Upload</a>
+                        <a class="nav-link text-white" href="{{ url_for('main.upload') }}">Upload</a>
                     </li>
 
                     <!-- Result dropdown -->
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ url_for('history') }}">History</a>
+                        <a class="nav-link text-white" href="{{ url_for('main.history') }}">History</a>
                     </li>
 
                     <!-- User Insight -->
                     <li class="nav-item">
                         <a class="nav-link text-white"
-                            href="{{ url_for('user', username=current_user.username) }}">Insight</a>
+                            href="{{ url_for('main.user', username=current_user.username) }}">Insight</a>
                     </li>
 
 
                     <!-- My Share -->
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ url_for('share') }}">My Share</a>
+                        <a class="nav-link text-white" href="{{ url_for('main.share') }}">My Share</a>
                     </li>
 
 
                     <!-- Notification -->
                     <li class="nav-item position-relative">
-                        <a class="nav-link text-white" href="{{ url_for('notifications') }}">
+                        <a class="nav-link text-white" href="{{ url_for('main.notifications') }}">
                             Notifications
                             {% set unread_count = current_user.notifications|selectattr('is_read', 'equalto',
                             False)|list|length %}
@@ -64,16 +64,16 @@
 
                     <!-- Logout -->
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ url_for('logout') }}">Logout</a>
+                        <a class="nav-link text-white" href="{{ url_for('main.logout') }}">Logout</a>
                     </li>
 
                     {% else %}
                     <!-- When not logged in -->
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ url_for('login') }}">Login</a>
+                        <a class="nav-link text-white" href="{{ url_for('main.login') }}">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{{ url_for('register') }}">Register</a>
+                        <a class="nav-link text-white" href="{{ url_for('main.register') }}">Register</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -137,7 +137,7 @@
             <div class="toast-body">
                 {{ unread_message }}
                 <div class="mt-2 text-end">
-                    <a href="{{ url_for('mark_notification_read_and_redirect', next=request.full_path) }}"
+                    <a href="{{ url_for('main.mark_notification_read_and_redirect', next=request.full_path) }}"
                         class="btn btn-sm btn-primary">Okay</a>
                 </div>
             </div>

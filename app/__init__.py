@@ -1,23 +1,29 @@
-from flask import Flask, url_for
+from flask import Flask
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
-from flask_wtf import CSRFProtect  # CSRF protection
+from flask_wtf import CSRFProtect
+
+db = SQLAlchemy()
+migrate = Migrate()
+login = LoginManager()
+login.login_view = "login"
+csrf = CSRFProtect()
 
 
-app = Flask(__name__)
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(config_class)
 
-app.config.from_object(Config)
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-login = LoginManager(app)
-login.login_view = 'login'
+    db.init_app(app)
+    migrate.init_app(app, db)
+    login.init_app(app)
+    csrf.init_app(app)
 
-csrf = CSRFProtect()  # Instantiate
-csrf.init_app(app)   # Bind to Flask app instance
+    from app.blueprints import main
+    from app.routes import main_routes  # 必须触发一次视图导入注册
 
-if __name__ == "__main__":
-    app.run(debug=True)
+    app.register_blueprint(main)
 
-from app import routes, models
+    return app

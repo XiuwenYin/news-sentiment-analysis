@@ -3,30 +3,31 @@
 {% block title %}Create Your Account{% endblock %} {# More engaging title #}
 
 {% block content %}
-<div class="container my-5"> 
+<div class="container my-5">
     <div class="row justify-content-center">
-        <div class="col-md-7 col-lg-5"> 
+        <div class="col-md-7 col-lg-5">
 
             <div class="card auth-card">
-                <div class="card-body p-4 p-sm-5"> 
+                <div class="card-body p-4 p-sm-5">
 
                     {# <div class="text-center mb-4"> #}
-                    {# <img src="{{ url_for('static', filename='images/logo-dark-theme.png') }}" alt="Logo" width="72"> #}
-                    {# </div> #}
+                        {# <img src="{{ url_for('static', filename='images/logo-dark-theme.png') }}" alt="Logo"
+                            width="72"> #}
+                        {# </div> #}
 
                     <h2 class="text-center mb-2 auth-card-title">Create Account</h2> {# Class for title #}
                     <p class="text-center mb-4 auth-card-subtitle">Join News Sentiment today!</p> {# Subtitle #}
 
-                    <form method="POST" action="{{ url_for('register') }}">
+                    <form method="POST" action="{{ url_for('main.register') }}">
                         {{ form.hidden_tag() }}
 
                         <div class="mb-3">
                             {{ form.username.label(class="form-label") }}
                             {{ form.username(class_="form-control form-control-lg", placeholder="Choose a username") }}
                             {% if form.username.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.username.errors %}<span>{{ error }}</span>{% endfor %}
-                                </div>
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.username.errors %}<span>{{ error }}</span>{% endfor %}
+                            </div>
                             {% endif %}
                         </div>
 
@@ -34,9 +35,9 @@
                             {{ form.email.label(class="form-label") }}
                             {{ form.email(class_="form-control form-control-lg", placeholder="your@email.com") }}
                             {% if form.email.errors %} {# Corrected to form.email.errors #}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.email.errors %}<span>{{ error }}</span>{% endfor %}
-                                </div>
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.email.errors %}<span>{{ error }}</span>{% endfor %}
+                            </div>
                             {% endif %}
                         </div>
 
@@ -44,30 +45,31 @@
                             {{ form.password.label(class="form-label") }}
                             {{ form.password(class_="form-control form-control-lg", placeholder="Create a password") }}
                             {% if form.password.errors %} {# Corrected to form.password.errors #}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.password.errors %}<span>{{ error }}</span>{% endfor %}
-                                </div>
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.password.errors %}<span>{{ error }}</span>{% endfor %}
+                            </div>
                             {% endif %}
                         </div>
 
-                        <div class="mb-4"> 
+                        <div class="mb-4">
                             {{ form.password2.label(class="form-label") }}
-                            {{ form.password2(class_="form-control form-control-lg", placeholder="Confirm your password") }}
-                            {% if form.password2.errors %} 
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.password2.errors %}<span>{{ error }}</span>{% endfor %}
-                                </div>
+                            {{ form.password2(class_="form-control form-control-lg", placeholder="Confirm your
+                            password") }}
+                            {% if form.password2.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.password2.errors %}<span>{{ error }}</span>{% endfor %}
+                            </div>
                             {% endif %}
                         </div>
 
                         <div class="d-grid mb-3">
-                            {{ form.submit(class_="btn btn-primary btn-lg") }} 
+                            {{ form.submit(class_="btn btn-primary btn-lg") }}
                         </div>
 
                     </form>
 
                     <div class="mt-4 text-center auth-card-footer-link">
-                        <p>Already have an account? <a href="{{ url_for('login') }}">Sign in here</a>.</p>
+                        <p>Already have an account? <a href="{{ url_for('main.login') }}">Sign in here</a>.</p>
                     </div>
 
                 </div>
