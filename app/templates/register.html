@@ -18,7 +18,7 @@
                     <h2 class="text-center mb-2 auth-card-title">Create Account</h2> {# Class for title #}
                     <p class="text-center mb-4 auth-card-subtitle">Join News Sentiment today!</p> {# Subtitle #}
 
-                    <form method="POST" action="{{ url_for('main.register') }}">
+                    <form method="POST" action="{{ url_for('auth.register') }}">
                         {{ form.hidden_tag() }}
 
                         <div class="mb-3">
@@ -69,7 +69,7 @@
                     </form>
 
                     <div class="mt-4 text-center auth-card-footer-link">
-                        <p>Already have an account? <a href="{{ url_for('main.login') }}">Sign in here</a>.</p>
+                        <p>Already have an account? <a href="{{ url_for('auth.login') }}">Sign in here</a>.</p>
                     </div>
 
                 </div>
