@@ -71,7 +71,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered"> {# Added modal-dialog-centered #}
         {# Add a custom class to .modal-content for dark theme styling #}
         <div class="modal-content custom-dark-modal">
-            <form method="POST" action="{{ url_for('share_post_modal') }}">
+            <form method="POST" action="{{ url_for('main.share_post_modal') }}">
                 {{ form.hidden_tag() }}
 
                 <div class="modal-header">
