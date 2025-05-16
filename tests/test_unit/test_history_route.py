@@ -1,6 +1,6 @@
 # tests/test_unit/test_history_route.py
 
-# 3.2.1: 单元测试 - 测试历史记录路由
+# 3.2.1: Unit Testing - Testing the History Routing
 from app.models import User, Post
 from app import db
 from datetime import datetime
