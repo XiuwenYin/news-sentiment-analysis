@@ -16,12 +16,11 @@
         <div class="reveal-on-scroll"> {# Wrap section content for a grouped reveal #}
             <h2 id="overview">Purpose</h2>
             <p>
-                This product uses text analysis technology to deeply mine data, extracting categories, classifications,
-                entities, keywords, emotions, feelings, relationships, and grammar.
+                This product is dedicated to analyzing news texts to help customers quickly and effectively understand
+                the basic information of a news article, including word count, news nature, news category, news summary,
+                and various emotional scores.Specifically, it includes the following meanings:
             </p>
-            <p>
-                This product is dedicated to news sentiment analysis. Users can obtain positive, negative, neutral and
-                other emotional information by uploading news texts, which has multiple meanings for individuals.</p>
+
             <ul>
                 <li class="reveal-on-scroll delay-100ms"><strong>Information filtering</strong><br>Individuals can
                     quickly obtain the emotional inclination of
@@ -31,10 +30,6 @@
                     emotions helps individuals manage their
                     emotional
                     reactions and avoid unnecessary anxiety and emotional fluctuations caused by negative news.</li>
-                <li class="reveal-on-scroll delay-300ms"><strong>Decision basis</strong><br>In life or investment
-                    decisions, one can refer to the results of news
-                    sentiment
-                    analysis to help individuals assess risks and opportunities.</li>
             </ul>
         </div>
 
@@ -44,14 +39,17 @@
                 <h4>✏️ Input text</h4>
                 <p>Directly paste news content for analysis</p>
             </div>
-            <div class="feature-box reveal-on-scroll delay-100ms">
-                <h4>🔍 Finding </h4>
-                <p>Observe the news category tendencies of oneself and different groups</p>
-            </div>
+
             <div class="feature-box reveal-on-scroll delay-200ms">
                 <h4>📊 Real time results</h4>
                 <p>Generate clear and intuitive sentiment analysis charts</p>
             </div>
+
+            <div class="feature-box reveal-on-scroll delay-100ms">
+                <h4>🔍 Finding </h4>
+                <p>Observe the news category tendencies of oneself and different groups</p>
+            </div>
+
             <div class="feature-box reveal-on-scroll delay-300ms">
                 <h4>🤝 Result sharing</h4>
                 <p>One click sharing and analyzing data with colleagues</p>
@@ -74,11 +72,6 @@
                 By analyzing sentiment in news content, organizations can identify emerging social issues and take
                 timely action through research or intervention.
             </li>
-
-            <li class="reveal-on-scroll delay-400ms"><strong>Cross-cultural understanding:</strong><br>
-                Sentiment analysis enables better recognition of culturally sensitive topics and helps institutions
-                promote inclusivity and targeted communication across diverse audiences.
-            </li>
         </ul>
 
         <h2 id="Applicable scenarios" class="reveal-on-scroll">Applicable scenarios</h2>
@@ -96,7 +89,7 @@
 
             <div class="col-md-4 reveal-on-scroll delay-100ms">
                 <div class="scene-card"
-                    style="background-image: url('{{ url_for('static', filename='images/遥控.jpg') }}');">
+                    style="background-image: url('{{ url_for('static', filename='images/controller.jpg') }}');">
                     <div class="overlay">
                         <h4>Film and Television Analysis</h4>
                         <p>Understand users' preferences and optimize content</p>
@@ -106,7 +99,7 @@
 
             <div class="col-md-4 reveal-on-scroll delay-200ms">
                 <div class="scene-card"
-                    style="background-image: url('{{ url_for('static', filename='images/人物.jpg') }}');">
+                    style="background-image: url('{{ url_for('static', filename='images/character.jpg') }}');">
                     <div class="overlay">
                         <h4>Character reputation tracking</h4>
                         <p>Analyze perception of public figures</p>
