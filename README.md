@@ -2,6 +2,21 @@
 
 This is a web-based application that allows users to upload news articles or other text content and receive automated sentiment and emotion analysis. The application classifies each submission as **positive**, **negative**, or **neutral**, and also identifies detailed emotions such as **anger**, **disgust**, **fear**, **joy**, **sadness**, **surprise**, and **neutral**.
 
+---
+
+## 👥 Contributors
+
+| UWA ID    | Name         | GitHub Username  |
+|-----------|--------------|------------------|
+| 24332945  | Xiuwen Yin   | XiuwenYin        |
+| 24305445  | Yanxi Liu    | yanxiliu33       |
+| 24103755  | Simon Liu    | Zhuzilinaba      |
+| 23884492  | Zihan Wu     | ZihanWu2025      |
+
+Repository: [https://github.com/XiuwenYin/news-sentiment-analysis](https://github.com/XiuwenYin/news-sentiment-analysis)
+
+---
+
 ## 🚀 Features
 
 - 📝 **Upload News or Articles**: Users can submit news articles through the web interface.
@@ -11,64 +26,117 @@ This is a web-based application that allows users to upload news articles or oth
   - Disgust
   - Fear
   - Joy
-  - Neutral
   - Sadness
   - Surprise
+  - Neutral
+- 📊 **Data Visualization**: Users can view their recent post sentiments and category distributions.
 - 📜 **History Tracking**: Every article a user uploads is saved in their personal history for future reference.
-- 🔗 **Share News**: Users can share their uploaded articles with others.
+- 🔗 **Share News**: Users can selectively share their analysis results with other registered users.
 
-## 💡 Use Case
+---
+
+## 💡 Use Cases
 
 This tool can help:
-- Journalists and media organizations track emotional tone in news reporting.
-- Researchers analyze media sentiment trends.
-- Readers assess emotional bias in news content.
+- Journalists and media organizations track emotional tone in reporting.
+- Researchers analyze media sentiment trends across time.
+- Readers assess emotional bias in content to make informed judgments.
+
+---
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: HTML, CSS, JavaScript, Bootstrap/Semantic UI
-- **Backend**: Flask (Python)
-- **NLP Model**: Pre-trained transformer models (e.g., BERT, RoBERTa) via Hugging Face Transformers
-- **Database**: SQLite (or other SQL-based DBMS)
-- **APIs**: Flask RESTful API for sentiment/emotion analysis and history management
+| Layer     | Technologies                     |
+|-----------|----------------------------------|
+| Frontend  | HTML, CSS, JavaScript, Bootstrap |
+| Backend   | Flask, Flask-Login, Flask-WTF    |
+| NLP Model | HuggingFace Transformers (BERT)  |
+| Database  | SQLite + SQLAlchemy ORM          |
+| Testing   | Pytest, Flask-Testing            |
 
-## 📦 Installation
+---
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/news-sentiment-analysis.git
-   cd news-sentiment-analysis
+## 📦 Installation & Setup
 
-
-NLP models needs pytorch and transformers libraries.
-```console
-$ pip install transformers
-```
-```console
-$ pip3 install torch torchvision
-```
-# news-sentiment-analysis
-
-## Dev Env Setup
-### Create virtual env
-```console
-$ python3 -m venv venv
-```
-### Activate virtual env
-```console
-$ source venv/bin/activate
-```
-### Install dependencies
-```console
-$ pip install -r requirements.txt
+### 1. Clone the Repository
+```bash
+git clone https://github.com/XiuwenYin/news-sentiment-analysis.git
+cd news-sentiment-analysis
 ```
 
-### Setting the FLASK_APP environment variable
-```console
-$ export FLASK_APP=news-sentiment-analysis.py
+### 2. Create and Activate Virtual Environment
+```bash
+python3 -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
 ```
 
-### Run the app
-```console
-$ flask run
+### 3. Install Python Dependencies
+```bash
+pip install -r requirements.txt
 ```
+
+### 4. Install NLP Model Dependencies
+```bash
+pip install transformers
+pip install torch torchvision
+```
+
+### 5. Set Environment Variable
+```bash
+export FLASK_APP=app  # or use `set FLASK_APP=app` on Windows
+```
+
+### 6. Initialize the Database
+```bash
+flask db upgrade
+```
+
+### 7. Run the Application
+```bash
+flask run
+```
+
+Access via: [http://127.0.0.1:5000](http://127.0.0.1:5000)
+
+---
+
+## 🧪 Running Tests
+
+To run all unit tests:
+```bash
+pytest tests/
+```
+
+Our test suite covers:
+- Upload form validation
+- Route functionality (upload, history, insights, sharing)
+- Sentiment model mocking
+- Access control (authentication required)
+
+---
+
+## 📁 Project Structure
+
+```
+news-sentiment-analysis/
+│
+├── app/                    # Main application code
+│   ├── models.py           # Database models
+│   ├── forms.py            # WTForms definitions
+│   ├── routes/             # Blueprinted routes
+│   ├── templates/          # HTML templates
+│   └── static/             # Static assets (CSS, JS, images)
+│
+├── tests/                  # Unit test suite
+│
+├── requirements.txt        # Python dependencies
+├── config.py               # App configurations
+├── run.py / app.py         # Flask app entry point
+└── README.md               # Project description
+```
+
+---
+
+## 🤝 Contribution
+
+We welcome bug reports and suggestions. Please open issues or pull requests in the GitHub repository.
