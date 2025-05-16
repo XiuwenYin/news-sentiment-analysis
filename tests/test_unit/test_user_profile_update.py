@@ -10,7 +10,7 @@ def test_user_profile_updates_missing_info(test_client, app):
         user.set_password("password")
         db.session.add(user)
         db.session.commit()
-        user_id = user.id  # 保存 id
+        user_id = user.id  # save id
 
     test_client.post("/auth/login", data={
         "username": "testuser",

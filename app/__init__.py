@@ -8,7 +8,7 @@ from flask_wtf import CSRFProtect
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
-login.login_view = "auth.login"  # 注意：这里应是蓝图名.视图函数名
+login.login_view = "auth.login" 
 csrf = CSRFProtect()
 
 def create_app(config_class=Config):
@@ -20,7 +20,7 @@ def create_app(config_class=Config):
     login.init_app(app)
     csrf.init_app(app)
 
-    # 蓝图统一注册
+    # Blueprint unified registration
     from app.blueprints import register_blueprints
     register_blueprints(app)
 

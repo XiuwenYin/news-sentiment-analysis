@@ -8,7 +8,7 @@ from transformers import pipeline
 
 share_bp = Blueprint("share", __name__)
 
-# 情绪模型
+# Emotional Model
 emotion_classifier = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base", top_k=None)
 
 @share_bp.route("/share")

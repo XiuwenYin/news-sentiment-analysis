@@ -7,7 +7,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.6;
 
-    /* Fixed background image for the "赏花" effect */
+    /* Fixed background image for the "Flower viewing" effect */
     background-image: url('../images/background.jpg'); /* Path relative to homepage.css (app/static/images/background.jpg) */
     background-attachment: fixed;
     background-size: cover;

@@ -4,12 +4,12 @@ import pytest
 
 # 2.1 New post creation, sentiment analysis result access, and other Post model-specific methods
 def test_create_post(app, init_database, new_user):
-    # 2.1.1: 新帖子创建
+    # 2.1.1: New Post Creation
     with app.app_context():
         post = Post(
             title="Test Title",
             body="This is a test body.",
-            author=new_user  # 需要是已存在数据库中的 user
+            author=new_user  
         )
         from app import db
         db.session.add(new_user)
@@ -24,7 +24,7 @@ def test_create_post(app, init_database, new_user):
 
 
 def test_post_sentiment_fields(app, init_database, new_user):
-    # 2.1.2: 情感分析结果存取
+    # 2.1.2: Sentiment analysis results storage
     with app.app_context():
         post = Post(
             title="Emotion Post",
@@ -48,7 +48,7 @@ def test_post_sentiment_fields(app, init_database, new_user):
 
 
 def test_post_repr_method(app, init_database, new_user):
-    # 2.1.3: Post模型特有方法 (__repr__)
+    # 2.1.3: Post model-specific method (__repr__)
     with app.app_context():
         post = Post(title="Repr Test", body="...", author=new_user)
         from app import db

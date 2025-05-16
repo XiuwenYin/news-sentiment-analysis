@@ -46,4 +46,4 @@ def test_filter_form_blank_filter_by():
             "filter_by": ""
         })
         form = FilterForm(formdata=form_data, meta={'csrf': False})
-        assert form.validate() is True  # filter_by 可以为空
+        assert form.validate() is True  

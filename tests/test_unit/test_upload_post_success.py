@@ -9,14 +9,14 @@ def test_upload_post_success(test_client, app, new_user):
         db.session.add(new_user)
         db.session.commit()
 
-        # 登录
+        # login
         login_data = {
             "username": new_user.username,
             "password": "testpass"
         }
         test_client.post("/auth/login", data=login_data, follow_redirects=True)
 
-        # patch 的路径指向 upload_routes
+        # The path of patch points to upload_routes
         with patch("app.routes.upload_routes.sentiment_classifier") as mock_sentiment, \
              patch("app.routes.upload_routes.news_category_classifier") as mock_category, \
              patch("app.routes.upload_routes.news_summarizer") as mock_summarizer, \

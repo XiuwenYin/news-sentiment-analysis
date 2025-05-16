@@ -8,14 +8,13 @@ def test_upload_get_returns_200(test_client, app):
         db.session.add(user)
         db.session.commit()
 
-    # 登录
+    # login
     test_client.post("/auth/login", data={
         "username": "testuser",
         "password": "testpass"
     }, follow_redirects=True)
 
-    # 注意这里必须是完整路径
     response = test_client.get("/upload/upload", follow_redirects=True)
 
     assert response.status_code == 200
-    assert b"Upload" in response.data  # 或你表单中某个关键词
+    assert b"Upload" in response.data

@@ -1,7 +1,7 @@
 from app.models import Post
 from app import db
 
-# 2.2.4: 单元测试 - upload 路由 (POST失败 - 缺失标题/内容)
+# 2.2.4: Unit Testing - upload route (POST fails - missing headers/content)
 def test_upload_missing_title(test_client, app, new_user):
     with app.app_context():
         db.session.add(new_user)
@@ -13,7 +13,7 @@ def test_upload_missing_title(test_client, app, new_user):
             "password": "password"
         }, follow_redirects=True)
 
-        # 提交缺失标题
+        # Commit missing headers
         response = test_client.post("/upload/upload", data={
             "post_title": "",
             "news_content": "Some content here"
@@ -35,7 +35,7 @@ def test_upload_missing_content(test_client, app, new_user):
             "password": "password"
         }, follow_redirects=True)
 
-        # 提交缺失内容
+        # Submit missing content
         response = test_client.post("/upload/upload", data={
             "post_title": "Valid Title",
             "news_content": ""
@@ -57,7 +57,7 @@ def test_upload_missing_all(test_client, app, new_user):
             "password": "password"
         }, follow_redirects=True)
 
-        # 提交完全为空表单
+        # Submit a completely empty form
         response = test_client.post("/upload/upload", data={
             "post_title": "",
             "news_content": ""

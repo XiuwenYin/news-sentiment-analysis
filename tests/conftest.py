@@ -96,7 +96,7 @@ def new_user(app):
         return user
 
 @pytest.fixture(scope="session")
-def _browser_instance(): # 移除了 live_server_host_port，因为 live_server 是 function scope
+def _browser_instance():
     print(f"CONFLOG: Initializing new browser instance for the session.")
     chrome_options = ChromeOptions()
     # chrome_options.add_argument("--headless")
@@ -112,11 +112,8 @@ def _browser_instance(): # 移除了 live_server_host_port，因为 live_server 
     driver.quit()
 
 @pytest.fixture(scope="function")
-def browser(_browser_instance, live_server): # live_server 是 function scope
+def browser(_browser_instance, live_server):
     driver = _browser_instance
     print(f"CONFLOG_BROWSER_FUNC: Preparing browser. Clearing cookies. live_server at {live_server.url()}")
     driver.delete_all_cookies()
-    # 导航到一个已知的基础状态页，例如应用的根，或者 about:blank
-    # driver.get("about:blank") # 可选的额外重置步骤
-    # driver.get(live_server.url()) # 确保在导航前 live_server 已启动
     return driver

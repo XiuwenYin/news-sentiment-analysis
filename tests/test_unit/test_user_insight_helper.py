@@ -5,11 +5,11 @@ from app import db
 from app.models import User, Post
 from sqlalchemy import func
 
-# 4.2.1: 单元测试 - Insight 数据聚合/筛选辅助函数 (mock DB)
+# 4.2.1: Unit testing - Insight data aggregation/filtering helper functions (mock DB)
 def test_category_distribution_by_gender(app):
     with app.app_context():
         db.create_all()
-        # 添加两个不同性别的用户
+        # Add two users of different genders
         user1 = User(username="alice", email="alice@example.com", gender="Female")
         user1.set_password("pass")
         user2 = User(username="bob", email="bob@example.com", gender="Male")
@@ -17,7 +17,7 @@ def test_category_distribution_by_gender(app):
         db.session.add_all([user1, user2])
         db.session.commit()
 
-        # 添加帖子，属于不同的类别
+        # Add posts belonging to different categories
         posts = [
             Post(title="p1", body="b1", category="World", sentiment="Positive", author=user1, timestamp=datetime.utcnow()),
             Post(title="p2", body="b2", category="Tech", sentiment="Positive", author=user1, timestamp=datetime.utcnow()),
@@ -26,7 +26,7 @@ def test_category_distribution_by_gender(app):
         db.session.add_all(posts)
         db.session.commit()
 
-        # 查询 Female 的类别分布
+        #Query the category distribution of Female
         result = db.session.execute(
             sa.select(Post.category, func.count(Post.id))
             .join(User)
@@ -41,7 +41,7 @@ def test_category_distribution_by_gender(app):
 def test_category_distribution_by_age_group(app):
     with app.app_context():
         db.create_all
-        # 添加两个用户，年龄不同
+        # Add two users with different ages
         user1 = User(username="young", email="young@example.com", age=21)
         user1.set_password("pass")
         user2 = User(username="old", email="old@example.com", age=65)
@@ -49,7 +49,7 @@ def test_category_distribution_by_age_group(app):
         db.session.add_all([user1, user2])
         db.session.commit()
 
-        # 添加帖子
+        # Add posts
         posts = [
             Post(title="p1", body="b1", category="Sports", sentiment="Positive", author=user1, timestamp=datetime.utcnow()),
             Post(title="p2", body="b2", category="Politics", sentiment="Neutral", author=user2, timestamp=datetime.utcnow())
@@ -57,7 +57,7 @@ def test_category_distribution_by_age_group(app):
         db.session.add_all(posts)
         db.session.commit()
 
-        # 查询 18–30 岁年龄段的类别分布
+        # Query the category distribution of the age group 18–30
         result = db.session.execute(
             sa.select(Post.category, func.count(Post.id))
             .join(User)

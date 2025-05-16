@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function type() {
         if (charIndex < text.length) {
-            // 在光标前插入字符
+            // Insert character before the cursor
             cursor.insertAdjacentText("beforebegin", text.charAt(charIndex));
             charIndex++;
             setTimeout(type, typingSpeed);

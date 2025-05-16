@@ -2,7 +2,7 @@ from app.forms import UploadForm
 from werkzeug.datastructures import MultiDict, CombinedMultiDict
 from io import BytesIO
 
-# 2.2.1: 单元测试 - UploadForm 验证逻辑
+# 2.2.1: Unit Test - UploadForm Validation Logic
 def test_upload_form_valid(app):
     with app.app_context():
         form = UploadForm(
