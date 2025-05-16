@@ -60,8 +60,9 @@
         {% endif %}
 
         <div class="text-center mt-5 mb-4">
-            <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#sharePostModal">Share a New
-                Analysis</button> {# Made button larger #}
+            <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#sharePostModal">
+                Share a New Analysis
+            </button> {# Made button larger #}
         </div>
 
     </div> {# End of .share-container-card #}
@@ -75,27 +76,25 @@
                 {{ form.hidden_tag() }}
 
                 <div class="modal-header">
-                    <h5 class="modal-title" id="sharePostModalLabel">Share an Analysis</h5>
-                    {# Ensure btn-close is visible on dark background #}
+                    <h5 class="modal-title text-dark" id="sharePostModalLabel">Share an Analysis</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div id="step1" class="modal-step">
-                        <h6 class="mb-3">Step 1: Select an Analysis to Share</h6>
+                        <h6 class="mb-3 text-dark">Step 1: Select an Analysis to Share</h6>
                         <div class="form-group">
                             <select name="post_id" class="form-control form-select" required>
                                 <option value="" disabled selected>Choose an analysis...</option>
                                 {% for post in user_posts %}
-                                <option value="{{ post.id }}">{{ post.title }} ({{ post.timestamp.strftime('%Y-%m-%d')
-                                    }})</option>
+                                <option value="{{ post.id }}">{{ post.title }} ({{ post.timestamp.strftime('%Y-%m-%d') }})</option>
                                 {% endfor %}
                             </select>
                         </div>
                     </div>
 
                     <div id="step2" class="modal-step d-none">
-                        <h6 class="mb-3">Step 2: Select a User to Share With</h6>
+                        <h6 class="mb-3 text-dark">Step 2: Select a User to Share With</h6>
                         <div class="form-group">
                             <select name="user_id" class="form-control form-select" required>
                                 <option value="" disabled selected>Choose a user...</option>

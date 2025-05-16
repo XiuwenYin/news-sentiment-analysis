@@ -6,6 +6,13 @@ from app import create_app, db as flask_db
 from config import TestConfig
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options as ChromeOptions
+from app.models import User
+from app import db as app_db
+from app.models import Post, db
+
+def generate_unique_string(prefix="test"):
+    import time
+    return f"{prefix}_{int(time.time() * 1000)}"
 
 @pytest.fixture(scope='session')
 def app():
@@ -95,6 +102,30 @@ def new_user(app):
             user.profile_completed = False
         return user
 
+
+@pytest.fixture
+def user_with_post(app, init_database):
+    from app.models import User, Post, db
+    username = "selenium_user"
+    email = "selenium_user@example.com"
+    password = "seleniumpass123"
+    with app.app_context():
+        # Main user
+        user = User(username=username, email=email)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        # Post for main user
+        post = Post(title="Test Post", body="Test Body", author=user)
+        db.session.add(post)
+        db.session.commit()
+        # Another user to share with
+        other_user = User(username="otheruser", email="otheruser@example.com")
+        other_user.set_password("otherpass123")
+        db.session.add(other_user)
+        db.session.commit()
+        return {"username": username, "password": password, "user": user, "post": post}
+
 @pytest.fixture(scope="session")
 def _browser_instance():
     print(f"CONFLOG: Initializing new browser instance for the session.")
@@ -117,3 +148,4 @@ def browser(_browser_instance, live_server):
     print(f"CONFLOG_BROWSER_FUNC: Preparing browser. Clearing cookies. live_server at {live_server.url()}")
     driver.delete_all_cookies()
     return driver
+
