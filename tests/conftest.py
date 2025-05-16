@@ -9,6 +9,10 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from app.models import User
 from app import db as app_db
 from app.models import Post, db
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from tests.test_selenium.test_auth_flows import robust_click
 
 def generate_unique_string(prefix="test"):
     import time
@@ -125,6 +129,42 @@ def user_with_post(app, init_database):
         db.session.add(other_user)
         db.session.commit()
         return {"username": username, "password": password, "user": user, "post": post}
+
+@pytest.fixture
+def user_with_notification(app, init_database):
+    from app.models import User, Post, db, Notification
+    main_username = "mainuser"
+    main_email = "mainuser@example.com"
+    main_password = "mainpass123"
+    shared_username = "shareduser"
+    shared_email = "shareduser@example.com"
+    shared_password = "sharedpass123"
+    with app.app_context():
+        main_user = User(username=main_username, email=main_email)
+        main_user.set_password(main_password)
+        db.session.add(main_user)
+        db.session.commit()
+        post = Post(title="Test Post", body="Test Body", author=main_user)
+        db.session.add(post)
+        db.session.commit()
+        shared_user = User(username=shared_username, email=shared_email)
+        shared_user.set_password(shared_password)
+        db.session.add(shared_user)
+        db.session.commit()
+        # Only assign, do not read!
+        post.shared_with = [shared_user]
+        db.session.commit()
+        notif = Notification(
+            user_id=shared_user.id,
+            message=f'You have been shared a post: "{post.title}" by {main_user.username}'
+        )
+        db.session.add(notif)
+        db.session.commit()
+        return {
+            "username": shared_username,
+            "password": shared_password,
+            "notif_message": notif.message
+        }
 
 @pytest.fixture(scope="session")
 def _browser_instance():

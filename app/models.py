@@ -57,7 +57,7 @@ class Post(db.Model):
                                                index=True)
     
     # Many-to-many relationship: post ←→ users it is shared with
-    shared_with: so.WriteOnlyMapped[list['User']] = so.relationship(
+    shared_with: so.Mapped[list['User']] = so.relationship(
         'User',
         secondary='post_shares',
         back_populates='shared_posts'
