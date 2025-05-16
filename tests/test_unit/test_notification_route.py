@@ -2,10 +2,10 @@ import unittest
 from app import create_app, db
 from app.models import User, Notification
 
-# ✅ 修正配置，避免路径报错
+# Correct the configuration to avoid path errors
 class FixedTestConfig:
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'  # ✅ 使用内存数据库
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'  # Use in-memory SQLite for tests
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = False
     SECRET_KEY = 'testkey'
@@ -18,7 +18,7 @@ class TestNotificationRoutes(unittest.TestCase):
         self.app_context.push()
         db.create_all()
 
-        # ✅ 创建用户
+        # Create a test user
         self.user = User(username='testuser', email='test@example.com')
         self.user.set_password("testpass")
         db.session.add(self.user)
@@ -44,7 +44,7 @@ class TestNotificationRoutes(unittest.TestCase):
         db.session.commit()
 
         with self.app.test_client() as client:
-            # ✅ 模拟登录用户
+            # simulate user login
             with client.session_transaction() as sess:
                 sess['_user_id'] = str(self.user.id)
 
